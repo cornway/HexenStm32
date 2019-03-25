@@ -42,7 +42,8 @@
 
 // TYPES -------------------------------------------------------------------
 
-typedef struct V_PREPACK {
+typedef V_PREPACK struct 
+{
     int marker;
     int infoOffset;
     int code;
@@ -309,7 +310,7 @@ static int (*PCodeCmds[]) (void) =
 //
 //==========================================================================
 
-static void ACSAssert(int condition, char *fmt, ...)
+static void ACSAssert(int condition, const char *fmt, ...)
 {
     char buf[128];
     va_list args;

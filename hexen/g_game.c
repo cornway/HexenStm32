@@ -13,13 +13,16 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
+
 
 #include <string.h>
 #include "m_random.h"
 #include "h2def.h"
 #include "s_sound.h"
 #include "doomkeys.h"
+#ifdef ORIG
+#include "i_input.h"
+#endif
 #include "i_video.h"
 #include "i_system.h"
 #include "i_timer.h"
@@ -908,9 +911,19 @@ boolean G_Responder(event_t * ev)
             return (false);     // always let key up events filter down
 
         case ev_mouse:
-        case ev_joystick:
+            SetMouseButtons(ev->data1);
+            mousex = ev->data2 * (mouseSensitivity + 5) / 10;
+            mousey = ev->data3 * (mouseSensitivity + 5) / 10;
             return (true);      // eat events
-
+#if 0
+        case ev_joystick:
+            SetJoyButtons(ev->data1);
+            joyxmove = ev->data2;
+            joyymove = ev->data3;
+            joystrafemove = ev->data4;
+            joylook = ev->data5;
+            return (true);      // eat events
+#endif
         default:
             break;
     }
@@ -1949,10 +1962,10 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
     //
     // Record or playback a demo with high resolution turning.
     //
-
+#ifdef ORIG
     longtics = D_NonVanillaRecord(M_ParmExists("-longtics"),
                                   "vvHeretic longtics demo");
-
+#endif
     // If not recording a longtics demo, record in low res
 
     lowres_turn = !longtics;
@@ -1998,6 +2011,7 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
     //   0x02 = -nomonsters
 
     *demo_p = 1; // assume player one exists
+#ifdef ORIG
     if (D_NonVanillaRecord(respawnparm, "vvHeretic -respawn header flag"))
     {
         *demo_p |= DEMOHEADER_RESPAWN;
@@ -2010,6 +2024,7 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
     {
         *demo_p |= DEMOHEADER_NOMONSTERS;
     }
+#endif
     demo_p++;
     *demo_p++ = PlayerClass[0];
 
@@ -2031,9 +2046,9 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
 ===================
 */
 
-char *defdemoname;
+static const char *defdemoname;
 
-void G_DeferedPlayDemo(char *name)
+void G_DeferedPlayDemo(const char *name)
 {
     defdemoname = name;
     gameaction = ga_playdemo;
@@ -2045,7 +2060,7 @@ void G_DoPlayDemo(void)
     int i, lumpnum, episode, map;
 
     gameaction = ga_nothing;
-    lumpnum = W_GetNumForName(defdemoname);
+    lumpnum = W_GetNumForName((char *)defdemoname);
     demobuffer = W_CacheLumpNum(lumpnum, PU_STATIC);
     demo_p = demobuffer;
     skill = *demo_p++;
@@ -2057,6 +2072,7 @@ void G_DoPlayDemo(void)
     // Note references to vvHeretic here; these are the extensions used by
     // vvHeretic, which we're just reusing for Hexen demos too. There is no
     // vvHexen.
+#ifdef ORIG
     if (D_NonVanillaPlayback((*demo_p & DEMOHEADER_LONGTICS) != 0,
                              lumpnum, "vvHeretic longtics demo"))
     {
@@ -2072,7 +2088,7 @@ void G_DoPlayDemo(void)
     {
         nomonsters = true;
     }
-
+#endif
     for (i = 0; i < maxplayers; i++)
     {
         playeringame[i] = (*demo_p++) != 0;
@@ -2160,7 +2176,7 @@ boolean G_CheckDemoStatus(void)
         if (singledemo)
             I_Quit();
 
-        W_ReleaseLumpName(defdemoname);
+        W_ReleaseLumpName((char *)defdemoname);
         demoplayback = false;
         H2_AdvanceDemo();
         return true;
@@ -2178,4 +2194,23 @@ boolean G_CheckDemoStatus(void)
     return false;
 }
 
-#endif
+extern GameVersion_t   gameversion;
+// Get the demo version code appropriate for the version set in gameversion.
+int G_VanillaVersionCode(void)
+{
+    switch (gameversion)
+    {
+        case exe_doom_1_2:
+            I_Error("Doom 1.2 does not have a version code!");
+        case exe_doom_1_666:
+            return 106;
+        case exe_doom_1_7:
+            return 107;
+        case exe_doom_1_8:
+            return 108;
+        case exe_doom_1_9:
+        default:  // All other versions are variants on v1.9:
+            return 109;
+    }
+}
+

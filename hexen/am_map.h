@@ -13,7 +13,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
+
 
 #ifndef __AMMAP_H__
 #define __AMMAP_H__
@@ -120,5 +120,3 @@ typedef struct
 // extern int f_x, f_y, f_w, f_h;
 
 #endif
-
-#endif /*ENG_HEXEN*/

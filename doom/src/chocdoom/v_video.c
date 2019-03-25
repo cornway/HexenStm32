@@ -602,7 +602,7 @@ void V_DrawBox(int x, int y, int w, int h, int c)
  
 void V_DrawRawScreen(byte *raw)
 {
-    v_copy_line(dest_screen, raw, SCREENWIDTH * SCREENHEIGHT);
+    v_copy_line(I_VideoBuffer, raw, SCREENWIDTH * SCREENHEIGHT);
 }
 
 //
@@ -613,6 +613,7 @@ void V_Init (void)
     // no-op!
     // There used to be separate screens that could be drawn to; these are
     // now handled in the upper layers.
+    dest_screen = I_VideoBuffer;
 }
 
 // Set the buffer that the code draws to.

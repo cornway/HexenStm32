@@ -19,6 +19,8 @@
 #ifndef I_VIDEOHR_H
 #define I_VIDEOHR_H
 
+#if ORIG
+
 boolean I_SetVideoModeHR(void);
 void I_UnsetVideoModeHR(void);
 void I_SetWindowTitleHR(char *title);
@@ -30,6 +32,23 @@ void I_SetPaletteHR(const byte *palette);
 void I_FadeToPaletteHR(const byte *palette);
 void I_BlackPaletteHR(void);
 boolean I_CheckAbortHR(void);
+
+#else
+
+static inline boolean I_SetVideoModeHR(void) {return true;}
+static inline void I_UnsetVideoModeHR(void) {}
+static inline void I_SetWindowTitleHR(char *title) {}
+static inline void I_ClearScreenHR(void) {}
+static inline void I_SlamBlockHR(int x, int y, int w, int h, const byte *src) {}
+static inline void I_SlamHR(const byte *buffer) {}
+static inline void I_InitPaletteHR(void) {}
+static inline void I_SetPaletteHR(const byte *palette) {}
+static inline void I_FadeToPaletteHR(const byte *palette) {}
+static inline void I_BlackPaletteHR(void) {}
+static inline boolean I_CheckAbortHR(void) {}
+
+
+#endif
 
 #endif /* #ifndef I_VIDEOHR_H */
 

@@ -13,7 +13,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
+
 
 // HEADER FILES ------------------------------------------------------------
 
@@ -269,7 +269,7 @@ static void InitializeFade(boolean fadeIn)
             PaletteDelta[i] = FixedDiv(Palette[i], -70 * FRACUNIT);
         }
     }
-    I_SetPalette(RealPalette);
+    I_SetPalette(RealPalette, 0);
 }
 
 //===========================================================================
@@ -300,7 +300,7 @@ static void FadePic(void)
         Palette[i] += PaletteDelta[i];
         RealPalette[i] = Palette[i] >> FRACBITS;
     }
-    I_SetPalette(RealPalette);
+    I_SetPalette(RealPalette, 0);
 }
 
 //===========================================================================
@@ -366,17 +366,17 @@ void F_Drawer(void)
 
 static char *GetFinaleText(int sequence)
 {
-    char *msgLumpName;
+    const char *msgLumpName;
     int msgSize;
     int msgLump;
-    static char *winMsgLumpNames[] = {
+    static const char *winMsgLumpNames[] = {
         "win1msg",
         "win2msg",
         "win3msg"
     };
 
     msgLumpName = winMsgLumpNames[sequence];
-    msgLump = W_GetNumForName(msgLumpName);
+    msgLump = W_GetNumForName((char *)msgLumpName);
     msgSize = W_LumpLength(msgLump);
     if (msgSize >= MAX_INTRMSN_MESSAGE_SIZE)
     {
@@ -386,5 +386,3 @@ static char *GetFinaleText(int sequence)
     ClusterMessage[msgSize] = 0;        // Append terminator
     return ClusterMessage;
 }
-
-#endif /*ENG_HEXEN*/

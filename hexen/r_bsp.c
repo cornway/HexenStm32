@@ -13,7 +13,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
+
 
 #include "h2def.h"
 #include "i_system.h"
@@ -506,5 +506,3 @@ void R_RenderBSPNode(int bspnum)
     if (R_CheckBBox(bsp->bbox[side ^ 1]))       // possibly divide back space
         R_RenderBSPNode(bsp->children[side ^ 1]);
 }
-
-#endif /*ENG_HEXEN*/

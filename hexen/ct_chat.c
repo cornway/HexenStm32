@@ -13,11 +13,14 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
+
 
 #include <string.h>
 #include <ctype.h>
 #include "h2def.h"
+#ifdef ORIG
+#include "i_input.h"
+#endif
 #include "s_sound.h"
 #include "doomkeys.h"
 #include "m_controls.h"
@@ -72,7 +75,7 @@ boolean cheated;
 
 static int FontABaseLump;
 
-char *CT_FromPlrText[MAXPLAYERS] = {
+const char *CT_FromPlrText[MAXPLAYERS] = {
     "BLUE:  ",
     "RED:  ",
     "YELLOW:  ",
@@ -136,7 +139,9 @@ void CT_Init(void)
 void CT_Stop(void)
 {
     chatmodeon = false;
+#ifdef ORIG
     I_StopTextInput();
+#endif
     return;
 }
 
@@ -229,7 +234,9 @@ boolean CT_Responder(event_t * ev)
         }
         CT_queueChatChar(sendto);
         chatmodeon = true;
+#ifdef ORIG
         I_StartTextInput(25, 10, SCREENWIDTH, 18);
+#endif
         return true;
     }
     else
@@ -506,5 +513,3 @@ void CT_ClearChatMessage(int player)
     msgptr[player] = 0;
     msglen[player] = 0;
 }
-
-#endif /*ENG_HEXEN*/

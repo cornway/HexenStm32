@@ -14,7 +14,6 @@
 // GNU General Public License for more details.
 //
 
-#ifdef ENG_HEXEN
 
 // HEADER FILES ------------------------------------------------------------
 
@@ -189,5 +188,3 @@ boolean EV_Teleport(int tid, mobj_t * thing, boolean fog)
     }
     return P_Teleport(thing, mo->x, mo->y, mo->angle, fog);
 }
-
-#endif /*ENG_HEXEN*/

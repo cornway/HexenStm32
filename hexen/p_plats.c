@@ -14,7 +14,6 @@
 // GNU General Public License for more details.
 //
 
-#ifdef ENG_HEXEN
 
 #include "h2def.h"
 #include "m_random.h"
@@ -275,5 +274,3 @@ void P_RemoveActivePlat(plat_t * plat)
         }
     I_Error("P_RemoveActivePlat: can't find plat!");
 }
-
-#endif /*ENG_HEXEN*/

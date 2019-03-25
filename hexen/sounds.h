@@ -13,7 +13,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
+
 
 #ifndef __SOUNDSH__
 #define __SOUNDSH__
@@ -314,5 +314,3 @@ typedef enum
 } sfxenum_t;
 
 #endif
-
-#endif /*ENG_HEXEN*/

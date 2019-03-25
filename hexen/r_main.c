@@ -13,7 +13,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
+
 
 #include <math.h>
 #include "m_random.h"
@@ -829,5 +829,3 @@ void R_RenderPlayerView(player_t * player)
     R_DrawMasked();
     NetUpdate();                // check for new console commands
 }
-
-#endif /*ENG_HEXEN*/

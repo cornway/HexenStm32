@@ -14,7 +14,6 @@
 // GNU General Public License for more details.
 //
 
-#ifdef ENG_HEXEN
 
 // HEADER FILES ------------------------------------------------------------
 
@@ -582,5 +581,3 @@ void R_DrawPlanes(void)
         W_ReleaseLumpNum(firstflat + flattranslation[pl->picnum]);
     }
 }
-
-#endif

@@ -13,7 +13,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
+
 
 #include "h2def.h"
 #include "i_system.h"
@@ -170,5 +170,3 @@ void P_ChangeSwitchTexture(line_t * line, int useAgain)
         }
     }
 }
-
-#endif /*ENG_HEXEN*/

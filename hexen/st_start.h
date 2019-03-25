@@ -13,7 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
 
 #ifndef STSTART_H
 #define STSTART_H
@@ -29,8 +28,8 @@
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 extern void ST_Init(void);
 extern void ST_Done(void);
-extern void ST_Message(char *message, ...);
-extern void ST_RealMessage(char *message, ...);
+extern void ST_Message(const char *message, ...);
+extern void ST_RealMessage(const char *message, ...);
 extern void ST_Progress(void);
 extern void ST_NetProgress(void);
 extern void ST_NetDone(void);
@@ -40,5 +39,3 @@ extern void ST_NetDone(void);
 extern int graphical_startup;
 
 #endif
-
-#endif /*ENG_HEXEN*/

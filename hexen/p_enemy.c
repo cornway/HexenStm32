@@ -13,7 +13,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
+
 
 #include "h2def.h"
 #include "m_random.h"
@@ -5440,5 +5440,3 @@ void A_KBoltRaise(mobj_t * actor)
         // Maybe cap it off here
     }
 }
-
-#endif /*ENG_HEXEN*/

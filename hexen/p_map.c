@@ -13,7 +13,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
+
 
 #include "h2def.h"
 #include "m_random.h"
@@ -2310,5 +2310,3 @@ boolean P_ChangeSector(sector_t * sector, int crunch)
 
     return nofit;
 }
-
-#endif /*ENG_HEXEN*/

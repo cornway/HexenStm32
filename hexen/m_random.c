@@ -14,7 +14,6 @@
 // GNU General Public License for more details.
 //
 
-#ifdef ENG_HEXEN
 
 // HEADER FILES ------------------------------------------------------------
 
@@ -79,5 +78,3 @@ int P_SubRandom (void)
     int r = P_Random();
     return r - P_Random();
 }
-
-#endif /*ENG_HEXEN*/

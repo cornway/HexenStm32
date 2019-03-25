@@ -98,7 +98,7 @@ extern void AM_Stop(void);
 void IN_Start(void)
 {
     int i;
-    I_SetPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
+    I_SetPalette(W_CacheLumpName("PLAYPAL", PU_CACHE), 0);
     InitStats();
     LoadPics();
     intermission = true;
@@ -153,7 +153,7 @@ static void Stop(void)
 //      Initializes the stats for single player mode
 //========================================================================
 
-static char *ClusMsgLumpNames[] = {
+static const char *ClusMsgLumpNames[] = {
     "clus1msg",
     "clus2msg",
     "clus3msg",
@@ -170,7 +170,7 @@ static void InitStats(void)
     int posnum;
     int slaughtercount;
     int playercount;
-    char *msgLumpName;
+    const char *msgLumpName;
     int msgSize;
     int msgLump;
 
@@ -186,7 +186,7 @@ static void InitStats(void)
             if (oldCluster >= 1 && oldCluster <= 5)
             {
                 msgLumpName = ClusMsgLumpNames[oldCluster - 1];
-                msgLump = W_GetNumForName(msgLumpName);
+                msgLump = W_GetNumForName((char *)msgLumpName);
                 msgSize = W_LumpLength(msgLump);
                 if (msgSize >= MAX_INTRMSN_MESSAGE_SIZE)
                 {

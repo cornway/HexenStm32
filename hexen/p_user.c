@@ -13,7 +13,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
+
 
 #include "h2def.h"
 #include "m_random.h"
@@ -418,7 +418,7 @@ void P_DeathThink(player_t * player)
     {
         if (player == &players[consoleplayer])
         {
-            I_SetPalette((byte *) W_CacheLumpName("PLAYPAL", PU_CACHE));
+            I_SetPalette((byte *) W_CacheLumpName("PLAYPAL", PU_CACHE), 0);
             inv_ptr = 0;
             curpos = 0;
             newtorch = 0;
@@ -1642,5 +1642,3 @@ void A_SpeedFade(mobj_t * actor)
     actor->flags &= ~MF_ALTSHADOW;
     actor->sprite = actor->target->sprite;
 }
-
-#endif /*ENG_HEXEN*/

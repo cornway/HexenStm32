@@ -14,7 +14,6 @@
 // GNU General Public License for more details.
 //
 
-#ifdef ENG_HEXEN
 
 #include "h2def.h"
 #include "i_system.h"
@@ -558,4 +557,24 @@ void R_DrawTopBorder(void)
     }
 }
 
-#endif /*ENG_HEXEN*/
+//
+// Copy a screen buffer.
+//
+pix_t *background_buffer = NULL;
+void
+R_VideoErase
+( unsigned	ofs,
+  int		count ) 
+{ 
+  // LFB copy.
+  // This might not be a good idea if memcpy
+  //  is not optiomal, e.g. byte by byte on
+  //  a 32bit CPU, as GNU GCC/Linux libc did
+  //  at one point.
+
+    if (background_buffer != NULL)
+    {
+        memcpy(I_VideoBuffer + ofs, background_buffer + ofs, count * sizeof(pix_t)); 
+    }
+} 
+
