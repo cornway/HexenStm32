@@ -20,6 +20,9 @@
 #include <ctype.h>
 #include "h2def.h"
 #include "doomkeys.h"
+#ifdef ORIG
+#include "i_input.h"
+#endif
 #include "i_system.h"
 #include "i_swap.h"
 #include "i_video.h"
@@ -67,7 +70,7 @@ typedef enum
 typedef struct
 {
     ItemType_t type;
-    char *text;
+    const char *text;
     void (*func) (int option);
     int option;
     MenuType_t menu;
@@ -293,7 +296,7 @@ static Menu_t *Menus[] = {
     &SaveMenu
 };
 
-static char *GammaText[] = {
+static const char *GammaText[] = {
     TXT_GAMMA_LEVEL_OFF,
     TXT_GAMMA_LEVEL_1,
     TXT_GAMMA_LEVEL_2,
@@ -338,7 +341,7 @@ static void InitFonts(void)
 //
 //---------------------------------------------------------------------------
 
-void MN_DrTextA(char *text, int x, int y)
+void MN_DrTextA(const char *text, int x, int y)
 {
     char c;
     patch_t *p;
@@ -364,7 +367,7 @@ void MN_DrTextA(char *text, int x, int y)
 //
 //==========================================================================
 
-void MN_DrTextAYellow(char *text, int x, int y)
+void MN_DrTextAYellow(const char *text, int x, int y)
 {
     char c;
     patch_t *p;
@@ -392,7 +395,7 @@ void MN_DrTextAYellow(char *text, int x, int y)
 //
 //---------------------------------------------------------------------------
 
-int MN_TextAWidth(char *text)
+int MN_TextAWidth(const char *text)
 {
     char c;
     int width;
@@ -422,7 +425,7 @@ int MN_TextAWidth(char *text)
 //
 //---------------------------------------------------------------------------
 
-void MN_DrTextB(char *text, int x, int y)
+void MN_DrTextB(const char *text, int x, int y)
 {
     char c;
     patch_t *p;
@@ -450,7 +453,7 @@ void MN_DrTextB(char *text, int x, int y)
 //
 //---------------------------------------------------------------------------
 
-int MN_TextBWidth(char *text)
+int MN_TextBWidth(const char *text)
 {
     char c;
     int width;
@@ -493,7 +496,7 @@ void MN_Ticker(void)
 //
 //---------------------------------------------------------------------------
 
-char *QuitEndMsg[] = {
+const char *QuitEndMsg[] = {
     "ARE YOU SURE YOU WANT TO QUIT?",
     "ARE YOU SURE YOU WANT TO END THE GAME?",
     "DO YOU WANT TO QUICKSAVE THE GAME NAMED",
@@ -507,7 +510,7 @@ void MN_Drawer(void)
     int x;
     int y;
     MenuItem_t *item;
-    char *selName;
+    const char *selName;
 
     if (MenuActive == false)
     {
@@ -564,7 +567,7 @@ void MN_Drawer(void)
         y = CurrentMenu->y + (CurrentItPos * ITEM_HEIGHT) + SELECTOR_YOFFSET;
         selName = MenuTime & 16 ? "M_SLCTR1" : "M_SLCTR2";
         V_DrawPatch(x + SELECTOR_XOFFSET, y,
-                    W_CacheLumpName(selName, PU_CACHE));
+                    W_CacheLumpName((char *)selName, PU_CACHE));
     }
 }
 
@@ -595,12 +598,12 @@ static void DrawMainMenu(void)
 static void DrawClassMenu(void)
 {
     pclass_t class;
-    static char *boxLumpName[3] = {
+    static const char *boxLumpName[3] = {
         "m_fbox",
         "m_cbox",
         "m_mbox"
     };
-    static char *walkLumpName[3] = {
+    static const char *walkLumpName[3] = {
         "m_fwalk1",
         "m_cwalk1",
         "m_mwalk1"
@@ -608,9 +611,9 @@ static void DrawClassMenu(void)
 
     MN_DrTextB("CHOOSE CLASS:", 34, 24);
     class = (pclass_t) CurrentMenu->items[CurrentItPos].option;
-    V_DrawPatch(174, 8, W_CacheLumpName(boxLumpName[class], PU_CACHE));
+    V_DrawPatch(174, 8, W_CacheLumpName((char *)boxLumpName[class], PU_CACHE));
     V_DrawPatch(174 + 24, 8 + 12,
-                W_CacheLumpNum(W_GetNumForName(walkLumpName[class])
+                W_CacheLumpNum(W_GetNumForName((char *)walkLumpName[class])
                                + ((MenuTime >> 3) & 3), PU_CACHE));
 }
 
@@ -673,26 +676,26 @@ static void DrawSaveMenu(void)
 
 static boolean ReadDescriptionForSlot(int slot, char *description)
 {
-    FILE *fp;
+    int fp;
     boolean found;
     char name[100];
     char versionText[HXS_VERSION_TEXT_LENGTH];
 
     M_snprintf(name, sizeof(name), "%shex%d.hxs", SavePath, slot);
 
-    fp = fopen(name, "rb");
+    fp = d_open(name, &fp, "rb");
 
-    if (fp == NULL)
+    if (fp < 0)
     {
         return false;
     }
 
-    found = fread(description, HXS_DESCRIPTION_LENGTH, 1, fp) == 1
-         && fread(versionText, HXS_VERSION_TEXT_LENGTH, 1, fp) == 1;
+    found = d_read(fp, description, HXS_DESCRIPTION_LENGTH) == HXS_DESCRIPTION_LENGTH
+         && d_read(fp, versionText, HXS_VERSION_TEXT_LENGTH) == HXS_VERSION_TEXT_LENGTH;
 
     found = found && strcmp(versionText, HXS_VERSION_TEXT) == 0;
 
-    fclose(fp);
+    d_close(fp);
 
     return found;
 }
@@ -934,8 +937,9 @@ static void SCSaveGame(int option)
         // game name:
         x = SaveMenu.x + 1;
         y = SaveMenu.y + 1 + option * ITEM_HEIGHT;
+#ifdef ORIG
         I_StartTextInput(x, y, x + 190, y + ITEM_HEIGHT - 2);
-
+#endif
         M_StringCopy(oldSlotText, SlotText[option], sizeof(oldSlotText));
         ptr = SlotText[option];
         while (*ptr)
@@ -953,7 +957,9 @@ static void SCSaveGame(int option)
     {
         G_SaveGame(option, SlotText[option]);
         FileMenuKeySteal = false;
+#ifdef ORIG
         I_StopTextInput();
+#endif
         MN_DeactivateMenu();
     }
     BorderNeedRefresh = true;
@@ -1261,7 +1267,7 @@ boolean MN_Responder(event_t * event)
                     askforquit = false;
                     typeofask = 0;
                     paused = false;
-                    I_SetPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
+                    I_SetPalette(W_CacheLumpName("PLAYPAL", PU_CACHE), 0);
                     H2_StartTitle();    // go to intro/demo mode.
                     return false;
                 case 3:
@@ -1755,7 +1761,9 @@ void MN_DeactivateMenu(void)
     MenuActive = false;
     if (FileMenuKeySteal)
     {
+#ifdef ORIG
         I_StopTextInput();
+#endif
     }
     if (!netgame)
     {
@@ -1773,7 +1781,7 @@ void MN_DeactivateMenu(void)
 
 void MN_DrawInfo(void)
 {
-    I_SetPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
+    I_SetPalette(W_CacheLumpName("PLAYPAL", PU_CACHE), 0);
     memcpy(I_VideoBuffer,
            (byte *) W_CacheLumpNum(W_GetNumForName("TITLE") + InfoType,
                                    PU_CACHE), SCREENWIDTH * SCREENHEIGHT);

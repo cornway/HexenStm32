@@ -184,7 +184,7 @@ boolean W_ParseCommandLine(void)
 	    W_AddFile(filename);
         }
     } else {
-        D_AddPwads();
+        //D_AddPwads();
     }
 
 //    W_PrintDirectory();

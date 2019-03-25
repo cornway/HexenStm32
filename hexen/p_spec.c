@@ -14,7 +14,7 @@
 // GNU General Public License for more details.
 //
 
-#ifdef ENG_HEXEN
+
 // HEADER FILES ------------------------------------------------------------
 
 #include "h2def.h"
@@ -44,7 +44,7 @@ static boolean CheckedLockedDoor(mobj_t * mo, byte lock);
 int *TerrainTypes;
 struct
 {
-    char *name;
+    const char *name;
     int type;
 } TerrainTypeDefs[] =
 {
@@ -103,7 +103,7 @@ void P_InitTerrainTypes(void)
     memset(TerrainTypes, 0, size);
     for (i = 0; TerrainTypeDefs[i].type != -1; i++)
     {
-        lump = W_CheckNumForName(TerrainTypeDefs[i].name);
+        lump = W_CheckNumForName((char *)TerrainTypeDefs[i].name);
         if (lump != -1)
         {
             TerrainTypes[lump - firstflat] = TerrainTypeDefs[i].type;
@@ -1202,5 +1202,3 @@ line_t *P_FindLine(int lineTag, int *searchPosition)
     *searchPosition = -1;
     return NULL;
 }
-
-#endif /*ENG_HEXEN*/

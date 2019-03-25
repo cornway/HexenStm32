@@ -13,7 +13,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
+
 
 #ifndef __P_LOCAL__
 #define __P_LOCAL__
@@ -278,8 +278,8 @@ extern mobj_t **blocklinks;     // for thing chains
 
 extern int clipmana[NUMMANA];
 
-void P_SetMessage(player_t * player, char *message, boolean ultmsg);
-void P_SetYellowMessage(player_t * player, char *message, boolean ultmsg);
+void P_SetMessage(player_t * player, const char *message, boolean ultmsg);
+void P_SetYellowMessage(player_t * player, const char *message, boolean ultmsg);
 void P_ClearMessage(player_t * player);
 void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher);
 void P_DamageMobj(mobj_t * target, mobj_t * inflictor, mobj_t * source,
@@ -377,5 +377,3 @@ boolean PO_Busy(int polyobj);
 #include "p_spec.h"
 
 #endif // __P_LOCAL__
-
-#endif /*ENG_HEXEN*/

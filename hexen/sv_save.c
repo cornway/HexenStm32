@@ -22,7 +22,6 @@
 #include "m_misc.h"
 #include "i_swap.h"
 #include "p_local.h"
-#include "ff.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -129,7 +128,7 @@ static byte SV_ReadByte(void);
 static uint16_t SV_ReadWord(void);
 static uint32_t SV_ReadLong(void);
 static void *SV_ReadPtr(void);
-static void SV_Write(void *buffer, int size);
+static void SV_Write(const void *buffer, int size);
 static void SV_WriteByte(byte val);
 static void SV_WriteWord(unsigned short val);
 static void SV_WriteLong(unsigned int val);
@@ -143,9 +142,7 @@ static void SV_WritePtr(void *ptr);
 
 char *SavePath = DEFAULT_SAVEPATH;
 
-#ifdef ENG_HEXEN
 int vanilla_savegame_limit = 1;
-#endif /*ENG_HEXEN*/
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -154,7 +151,7 @@ static mobj_t **MobjList;
 static mobj_t ***TargetPlayerAddrs;
 static int TargetPlayerCount;
 static boolean SavingPlayers;
-static FIL SavingFP;
+static int SavingFP;
 
 // CODE --------------------------------------------------------------------
 
@@ -1925,7 +1922,7 @@ static void StreamOut_floorWaggle_t(floorWaggle_t *str)
 //
 //==========================================================================
 
-void SV_SaveGame(int slot, char *description)
+void SV_SaveGame(int slot, const char *description)
 {
     char fileName[100];
     char versionText[HXS_VERSION_TEXT_LENGTH];
@@ -2047,7 +2044,7 @@ void SV_LoadGame(int slot)
     SV_OpenRead(fileName);
 
     // Set the save pointer and skip the description field
-    f_seek(SavingFP, HXS_DESCRIPTION_LENGTH, SEEK_CUR);
+    d_seek(SavingFP, HXS_DESCRIPTION_LENGTH);
 
     // Check the version text
 
@@ -3262,14 +3259,15 @@ static void CopyFile(char *source_name, char *dest_name)
 
     byte *buffer;
     int file_length, file_remaining;
-    FIL read_handle, write_handle;
-    unsigned int buf_count, read_count, write_count;
+    int read_handle, write_handle;
+    int buf_count, read_count, write_count;
 
-    if (f_open(&read_handle, source_name, FA_OPEN_ALWAYS) != FR_OK)
+    file_remaining = d_open(source_name, &read_handle, "rb");
+    if (read_handle < 0)
     {
         I_Error ("Couldn't read file %s", source_name);
     }
-    file_length = file_remaining = M_FileLength(&read_handle);
+    file_length = file_remaining;
 
     // Vanilla savegame emulation.
     //
@@ -3283,7 +3281,8 @@ static void CopyFile(char *source_name, char *dest_name)
         Z_Free(buffer);
     }
 
-    if (f_open(&write_handle, dest_name, FA_CREATE_ALWAYS | FA_WRITE) != FR_OK)
+    d_open(dest_name, &write_handle, "+wb");
+    if (write_handle < 0)
     {
         I_Error ("Couldn't read file %s", dest_name);
     }
@@ -3298,13 +3297,13 @@ static void CopyFile(char *source_name, char *dest_name)
             buf_count = file_remaining;
         }
 
-        f_read(&read_handle, buffer, buf_count, &read_count);
+        read_count = d_read(read_handle, buffer, buf_count);
         if (read_count < buf_count)
         {
             I_Error ("Couldn't read file %s", source_name);
         }
 
-        f_write(&write_handle, buffer, buf_count, &write_count);
+        write_count = d_write(write_handle, buffer, buf_count);
         if (write_count < buf_count)
         {
             I_Error ("Couldn't write to file %s", dest_name);
@@ -3314,8 +3313,8 @@ static void CopyFile(char *source_name, char *dest_name)
     } while (file_remaining > 0);
 
     Z_Free(buffer);
-    f_close(&read_handle);
-    f_close(&write_handle);
+    d_close(read_handle);
+    d_close(write_handle);
 }
 
 //==========================================================================
@@ -3326,11 +3325,12 @@ static void CopyFile(char *source_name, char *dest_name)
 
 static boolean ExistingFile(char *name)
 {
-    FIL fp;
+    int fp;
 
-    if (f_open(&fp, name, FA_OPEN_ALWAYS) == FR_OK)
+    d_open(name, &fp, "rb");
+    if (fp >= 0)
     {
-        f_close(&fp);
+        d_close(fp);
         return true;
     }
     else
@@ -3347,8 +3347,10 @@ static boolean ExistingFile(char *name)
 
 static void SV_OpenRead(char *fileName)
 {
+    d_open(fileName, &SavingFP, "rb");
+
     // Should never happen, only if hex6.hxs cannot ever be created.
-    if (    f_open(&SavingFP, fileName, FA_OPEN_EXISTING) != FR_OK)
+    if (SavingFP < 0)
     {
         I_Error("Could not load savegame %s", fileName);
     }
@@ -3356,7 +3358,7 @@ static void SV_OpenRead(char *fileName)
 
 static void SV_OpenWrite(char *fileName)
 {
-    f_open(&SavingFP, fileName, FA_OPEN_ALWAYS | FA_WRITE);
+    SavingFP = d_open(fileName, &SavingFP, "+wb");
 }
 
 //==========================================================================
@@ -3367,7 +3369,10 @@ static void SV_OpenWrite(char *fileName)
 
 static void SV_Close(void)
 {
-    f_close(&SavingFP);
+    if (SavingFP >= 0)
+    {
+        d_close(SavingFP);
+    }
 }
 
 //==========================================================================
@@ -3378,9 +3383,8 @@ static void SV_Close(void)
 
 static void SV_Read(void *buffer, int size)
 {
-		uint32_t n;
-    int retval = f_read(&SavingFP, buffer, size, &n);
-    if (n != size)
+    int retval = d_read(SavingFP, buffer, size);
+    if (retval != size)
     {
         I_Error("Incomplete read in SV_Read: Expected %d, got %d bytes",
             size, retval);
@@ -3419,30 +3423,26 @@ static void *SV_ReadPtr(void)
 //
 //==========================================================================
 
-static void SV_Write(void *buffer, int size)
+static void SV_Write(const void *buffer, int size)
 {
-		uint32_t n;
-    f_write(&SavingFP, buffer, size, &n);
+    d_write(SavingFP, buffer, size);
 }
 
 static void SV_WriteByte(byte val)
 {
-		uint32_t n;
-		f_write(&SavingFP, &val, sizeof(unsigned short), &n);
+    d_write(SavingFP, &val, sizeof(byte));
 }
 
 static void SV_WriteWord(unsigned short val)
 {
-		uint32_t n;
-		val = SHORT(val);
-		f_write(&SavingFP, &val, sizeof(unsigned short), &n);
+    val = SHORT(val);
+    d_write(SavingFP, &val, sizeof(unsigned short));
 }
 
 static void SV_WriteLong(unsigned int val)
 {
-		uint32_t n;
     val = LONG(val);
-		f_write(&SavingFP, &val, sizeof(unsigned short), &n);
+    d_write(SavingFP, &val, sizeof(int));
 }
 
 static void SV_WritePtr(void *val)
@@ -3453,6 +3453,6 @@ static void SV_WritePtr(void *val)
     // nowadays they might be larger. Whatever value we write here isn't
     // going to be much use when we reload the game.
 
-    ptr = (long) val;
+    ptr = (long)(intptr_t) val;
     SV_WriteLong((unsigned int) (ptr & 0xffffffff));
 }

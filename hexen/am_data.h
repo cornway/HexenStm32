@@ -13,7 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
 
 #ifndef __AMDATA_H__
 #define __AMDATA_H__
@@ -108,5 +107,3 @@ mline_t thintriangle_guy[] = {
 #define NUMTHINTRIANGLEGUYLINES (sizeof(thintriangle_guy)/sizeof(mline_t))
 
 #endif
-
-#endif /*ENG_HEXEN*/

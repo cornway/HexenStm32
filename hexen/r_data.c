@@ -13,7 +13,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
+
 
 #include "h2def.h"
 #include "i_system.h"
@@ -109,7 +109,7 @@ void R_DrawColumnInCache(column_t * patch, byte * cache, int originy,
         if (position + count > cacheheight)
             count = cacheheight - position;
         if (count > 0)
-            memcpy(cache + position, source, count);
+            H_memcpy(cache + position, source, count);
 
         patch = (column_t *) ((byte *) patch + patch->length + 4);
     }
@@ -372,7 +372,7 @@ void R_InitTextures(void)
         texture->width = SHORT(mtexture->width);
         texture->height = SHORT(mtexture->height);
         texture->patchcount = SHORT(mtexture->patchcount);
-        memcpy(texture->name, mtexture->name, sizeof(texture->name));
+        H_memcpy(texture->name, mtexture->name, sizeof(texture->name));
         mpatch = &mtexture->patches[0];
         patch = &texture->patches[0];
         for (j = 0; j < texture->patchcount; j++, mpatch++, patch++)
@@ -527,16 +527,16 @@ void R_InitData(void)
 ================
 */
 
-int R_FlatNumForName(char *name)
+int R_FlatNumForName(const char *name)
 {
     int i;
     char namet[9];
 
-    i = W_CheckNumForName(name);
+    i = W_CheckNumForName((char *)name);
     if (i == -1)
     {
         namet[8] = 0;
-        memcpy(namet, name, 8);
+        H_memcpy(namet, (void *)name, 8);
         I_Error("R_FlatNumForName: %s not found", namet);
     }
     return i - firstflat;
@@ -551,7 +551,7 @@ int R_FlatNumForName(char *name)
 ================
 */
 
-int R_CheckTextureNumForName(char *name)
+int R_CheckTextureNumForName(const char *name)
 {
     int i;
 
@@ -574,7 +574,7 @@ int R_CheckTextureNumForName(char *name)
 ================
 */
 
-int R_TextureNumForName(char *name)
+int R_TextureNumForName(const char *name)
 {
     int i;
     //char  namet[9];
@@ -696,5 +696,3 @@ void R_PrecacheLevel(void)
 
     Z_Free(spritepresent);
 }
-
-#endif /*ENG_HEXEN*/

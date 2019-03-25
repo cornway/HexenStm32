@@ -14,7 +14,7 @@
 // GNU General Public License for more details.
 //
 
-#ifdef ENG_HEXEN
+
 #include "h2def.h"
 #include "p_local.h"
 
@@ -300,5 +300,3 @@ int EV_CeilingCrushStop(line_t * line, byte * args)
     }
     return rtn;
 }
-
-#endif /*ENG_HEXEN*/

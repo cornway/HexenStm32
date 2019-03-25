@@ -968,7 +968,7 @@ void SB_PaletteFlash(boolean forceChange)
     {
         sb_palette = palette;
         pal = (byte *) W_CacheLumpNum(PlayPalette, PU_CACHE) + palette * 768;
-        I_SetPalette(pal);
+        I_SetPalette(pal, 0);
     }
 }
 

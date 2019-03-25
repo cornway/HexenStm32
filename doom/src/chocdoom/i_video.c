@@ -298,26 +298,17 @@ void I_SetPalette (byte* palette, int idx)
 {
     unsigned int i;
     rgb_t* color;
-    pal_t *pal;
 
-    if (idx > arrlen(palettes)) {
-        fatal_error("");
-    }
-    if (palettes[idx]) {
-        p_palette = palettes[idx];
-        goto sw_done;
-    }
-    pal = Z_Malloc(clut_num_bytes, PU_STATIC, 0);
-    palettes[idx] = pal;
-    p_palette = pal;
+    if (!p_palette)
+        p_palette = Z_Malloc(clut_num_bytes, PU_STATIC, 0);
 
-    if (idx == 0) {
-        rgb_palette = pal;
-    }
+    palettes[idx] = p_palette;
+    rgb_palette = p_palette;
+
     for (i = 0; i < clut_num_entries; i++)
     {
         color = (rgb_t*)palette;
-        pal[i] = GFX_RGB(gammatable[usegamma][color->r],
+        p_palette[i] = GFX_RGB(gammatable[usegamma][color->r],
                         gammatable[usegamma][color->g],
                         gammatable[usegamma][color->b],
                         GFX_OPAQUE);

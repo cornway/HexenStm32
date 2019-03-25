@@ -13,14 +13,13 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
+
 
 #ifndef __XDDEFS__
 #define __XDDEFS__
 
 #include "doomtype.h"
 #include "v_patch.h"
-#include "arch.h"
 
 //--------------------------------------------------------------------------
 //
@@ -45,12 +44,14 @@ enum
     ML_BEHAVIOR
 };
 
-typedef struct V_PREPACK {
+typedef V_PREPACK struct
+{
     short x;
     short y;
 } V_POSTPACK mapvertex_t;
 
-typedef struct V_PREPACK {
+typedef V_PREPACK struct
+{
     short textureoffset;
     short rowoffset;
     char toptexture[8];
@@ -59,7 +60,8 @@ typedef struct V_PREPACK {
     short sector;               // on viewer's side
 } V_POSTPACK mapsidedef_t;
 
-typedef struct V_PREPACK {
+typedef V_PREPACK struct
+{
     short v1;
     short v2;
     short flags;
@@ -94,7 +96,8 @@ typedef struct V_PREPACK {
 #define SPAC_PUSH		4       // when player/monster pushes line
 #define SPAC_PCROSS		5       // when projectile crosses line
 
-typedef struct V_PREPACK {
+typedef V_PREPACK struct
+{
     short floorheight;
     short ceilingheight;
     char floorpic[8];
@@ -104,12 +107,14 @@ typedef struct V_PREPACK {
     short tag;
 } V_POSTPACK mapsector_t;
 
-typedef struct V_PREPACK {
+typedef V_PREPACK struct
+{
     short numsegs;
     short firstseg;             // segs are stored sequentially
 } V_POSTPACK mapsubsector_t;
 
-typedef struct V_PREPACK {
+typedef V_PREPACK struct
+{
     short v1;
     short v2;
     short angle;
@@ -119,13 +124,15 @@ typedef struct V_PREPACK {
 } V_POSTPACK mapseg_t;
 
 #define	NF_SUBSECTOR	0x8000
-typedef struct V_PREPACK {
+typedef V_PREPACK struct
+{
     short x, y, dx, dy;         // partition line
     short bbox[2][4];           // bounding box for each child
     unsigned short children[2]; // if NF_SUBSECTOR its a subsector
 } V_POSTPACK mapnode_t;
 
-typedef struct V_PREPACK {
+typedef V_PREPACK struct
+{
     short tid;
     short x;
     short y;
@@ -159,7 +166,8 @@ typedef struct V_PREPACK {
 //
 //--------------------------------------------------------------------------
 
-typedef struct V_PREPACK {
+typedef V_PREPACK struct
+{
     short originx;
     short originy;
     short patch;
@@ -167,7 +175,8 @@ typedef struct V_PREPACK {
     short colormap;
 } V_POSTPACK mappatch_t;
 
-typedef struct V_PREPACK {
+typedef V_PREPACK struct
+{
     char name[8];
     boolean masked;
     short width;
@@ -178,5 +187,3 @@ typedef struct V_PREPACK {
 } V_POSTPACK maptexture_t;
 
 #endif // __XDDEFS__
-
-#endif /*ENG_HEXEN*/

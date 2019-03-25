@@ -14,8 +14,6 @@
 // GNU General Public License for more details.
 //
 
-#ifdef ENG_HEXEN
-
 #include <stdio.h>
 
 #include "h2def.h"
@@ -427,7 +425,6 @@ boolean AM_Responder(event_t * ev)
     static int joywait = 0;
 
     key = ev->data1;
-
 #if 0
     if (ev->type == ev_joystick && joybautomap >= 0
         && (ev->data1 & (1 << joybautomap)) != 0 && joywait < I_GetTime())
@@ -1427,7 +1424,7 @@ void AM_Drawer(void)
 
 // 8-player note:  Proper player color names here, too
 
-char *PlayerColorText[MAXPLAYERS] = {
+const char *PlayerColorText[MAXPLAYERS] = {
     "BLUE:",
     "RED:",
     "YELLOW:",
@@ -1551,5 +1548,3 @@ static void DrawWorldTimer(void)
         }
     }
 }
-
-#endif /*ENG_HEXEN*/

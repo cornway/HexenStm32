@@ -366,3 +366,74 @@ void P_SpawnLightSequence(sector_t * sector, int indexStep)
     }
     while (sec);
 }
+
+void T_Glow(glow_t*	g)
+{
+    switch(g->direction)
+    {
+      case -1:
+	// DOWN
+	g->sector->lightlevel -= GLOWSPEED;
+	if (g->sector->lightlevel <= g->minlight)
+	{
+	    g->sector->lightlevel += GLOWSPEED;
+	    g->direction = 1;
+	}
+	break;
+	
+      case 1:
+	// UP
+	g->sector->lightlevel += GLOWSPEED;
+	if (g->sector->lightlevel >= g->maxlight)
+	{
+	    g->sector->lightlevel -= GLOWSPEED;
+	    g->direction = -1;
+	}
+	break;
+    }
+}
+
+//
+// T_LightFlash
+// Do flashing lights.
+//
+void T_LightFlash (lightflash_t* flash)
+{
+    if (--flash->count)
+	return;
+	
+    if (flash->sector->lightlevel == flash->maxlight)
+    {
+	flash->sector->lightlevel = flash->minlight;
+	flash->count = (P_Random()&flash->mintime)+1;
+    }
+    else
+    {
+	flash->sector->lightlevel = flash->maxlight;
+	flash->count = (P_Random()&flash->maxtime)+1;
+    }
+
+}
+
+//
+// T_StrobeFlash
+//
+void T_StrobeFlash (strobe_t*		flash)
+{
+    if (--flash->count)
+	return;
+	
+    if (flash->sector->lightlevel == flash->minlight)
+    {
+	flash-> sector->lightlevel = flash->maxlight;
+	flash->count = flash->brighttime;
+    }
+    else
+    {
+	flash-> sector->lightlevel = flash->minlight;
+	flash->count =flash->darktime;
+    }
+
+}
+
+

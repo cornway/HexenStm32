@@ -14,7 +14,6 @@
 // GNU General Public License for more details.
 //
 
-#ifdef ENG_HEXEN
 
 // HEADER FILES ------------------------------------------------------------
 
@@ -31,6 +30,9 @@
 #include "d_mode.h"
 #include "m_misc.h"
 #include "s_sound.h"
+#ifdef ORIG
+#include "i_input.h"
+#endif
 #include "i_joystick.h"
 #include "i_system.h"
 #include "i_timer.h"
@@ -42,6 +44,10 @@
 #include "v_video.h"
 #include "w_main.h"
 
+#ifndef ORIG
+#define M_BindIntVariable(x...)
+#define M_BindStringVariable(x...)
+#endif
 // MACROS ------------------------------------------------------------------
 
 #define MAXWADFILES 20
@@ -93,7 +99,7 @@ extern boolean askforquit;
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 GameMode_t gamemode;
-char *gamedescription;
+static const char *gamedescription;
 char *iwadfile;
 static char demolumpname[9];    // Demo lump to start playing.
 boolean nomonsters;             // checkparm of -nomonsters
@@ -110,16 +116,18 @@ int startepisode;
 int startmap;
 boolean autostart;
 boolean advancedemo;
-FILE *debugfile;
+int debugfile;
 int UpdateState;
 int maxplayers = MAXPLAYERS;
+boolean		devparm;	// started game with -devparm
 
+char *          savegamedir;
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int WarpMap;
 static int demosequence;
 static int pagetic;
-static char *pagename;
+static const char *pagename;
 static char *SavePathConfig;
 
 // CODE --------------------------------------------------------------------
@@ -129,8 +137,9 @@ void D_BindVariables(void)
     int i;
 
     M_ApplyPlatformDefaults();
-
+#ifdef ORIG
     I_BindInputVariables();
+#endif
     I_BindVideoVariables();
     I_BindJoystickVariables();
     I_BindSoundVariables();
@@ -151,9 +160,9 @@ void D_BindVariables(void)
     key_multi_msgplayer[5] = CT_KEY_PLAYER6;
     key_multi_msgplayer[6] = CT_KEY_PLAYER7;
     key_multi_msgplayer[7] = CT_KEY_PLAYER8;
-
+#ifdef ORIG
     NET_BindVariables();
-
+#endif
     M_BindIntVariable("graphical_startup",      &graphical_startup);
     M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
     M_BindIntVariable("sfx_volume",             &snd_MaxVolume);
@@ -196,10 +205,12 @@ static void D_SetDefaultSavePath(void)
             SavePath = malloc(10);
             M_snprintf(SavePath, 10, "hexndata%c", DIR_SEPARATOR);
         }
+#if 0
         else
         {
-            SavePath = strdup(SavePathConfig);
+            SavePath = M_StringDuplicate(SavePathConfig);
         }
+#endif
     }
 
     // only set hexen.cfg path if using default handling
@@ -235,7 +246,7 @@ static void AdjustForMacIWAD(void)
 
     if (adjust_music)
     {
-        printf("** Note: You appear to be using the Mac version of the Hexen\n"
+        dprintf("** Note: You appear to be using the Mac version of the Hexen\n"
                "** IWAD file. This is missing the lumps required for OPL or\n"
                "** GUS emulation. Your music configuration is being adjusted\n"
                "** to a different setting that won't cause the game to "
@@ -266,12 +277,12 @@ static boolean D_GrabMouseCallback(void)
 
 static void D_HexenQuitMessage(void)
 {
-    printf("\nHexen: Beyond Heretic\n");
+    dprintf("\nHexen: Beyond Heretic\n");
 }
 
 static void D_AddFile(char *filename)
 {
-    printf("  adding %s\n", filename);
+    dprintf("  adding %s\n", filename);
 
     W_AddFile(filename);
 }
@@ -399,7 +410,7 @@ void D_DoomMain(void)
     I_AtExit(M_SaveDefaults, false);
 
     // Now that the savedir is loaded, make sure it exists
-    CreateSavePath();
+    //CreateSavePath();
 
     ST_Message("Z_Init: Init zone memory allocation daemon.\n");
     Z_Init();
@@ -422,9 +433,27 @@ void D_DoomMain(void)
     D_SetGameDescription();
     AdjustForMacIWAD();
 
+    //!
+    // @category mod
+    //
+    // Disable auto-loading of .wad files.
+    //
+#if 0
+    if (!M_ParmExists("-noautoload"))
+    {
+        char *autoload_dir;
+        autoload_dir = M_GetAutoloadDir("hexen.wad");
+        // TODO? DEH_AutoLoadPatches(autoload_dir);
+        W_AutoLoadWADs(autoload_dir);
+        free(autoload_dir);
+    }
+#endif
     HandleArgs();
 
-    I_PrintStartupBanner(gamedescription);
+    // Generate the WAD hash table.  Speed things up a bit.
+    W_GenerateHashTable();
+
+    I_PrintStartupBanner((char *)gamedescription);
 
     ST_Message("MN_Init: Init menu system.\n");
     MN_Init();
@@ -447,7 +476,9 @@ void D_DoomMain(void)
     I_InitMusic();
 
     ST_Message("NET_Init: Init networking subsystem.\n");
+#ifdef ORIG
     NET_Init();
+#endif
     D_ConnectNetGame();
 
     S_Init();
@@ -698,7 +729,7 @@ static void HandleArgs(void)
 
         if (W_AddFile(file) != NULL)
         {
-            strncmp(demolumpname, lumpinfo[numlumps - 1].name,
+            M_StringCopy(demolumpname, lumpinfo[numlumps - 1].name,
                          sizeof(demolumpname));
         }
         else
@@ -785,13 +816,13 @@ void H2_GameLoop(void)
     {
         char filename[20];
         M_snprintf(filename, sizeof(filename), "debug%i.txt", consoleplayer);
-        debugfile = fopen(filename, "w");
+        d_open(filename, &debugfile, "w");
     }
-    I_SetWindowTitle(gamedescription);
+    I_SetWindowTitle((char *)gamedescription);
     I_GraphicsCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
     I_InitGraphics();
-
+    I_SetPalette ((byte *)W_CacheLumpName ("PLAYPAL",PU_CACHE), 0);
     while (1)
     {
         // Frame syncronous IO operations
@@ -966,7 +997,7 @@ void H2_PageTicker(void)
 
 static void PageDrawer(void)
 {
-    V_DrawRawScreen(W_CacheLumpName(pagename, PU_CACHE));
+    V_DrawRawScreen(W_CacheLumpName((char *)pagename, PU_CACHE));
     if (demosequence == 1)
     {
         V_DrawPatch(4, 160, W_CacheLumpName("ADVISOR", PU_CACHE));
@@ -1112,4 +1143,39 @@ static void CreateSavePath(void)
     M_MakeDirectory(SavePath);
 }
 
-#endif /*ENG_HEXEN*/
+
+//
+// D_AdvanceDemo
+// Called after each demo or intro demosequence finishes
+//
+void D_AdvanceDemo (void)
+{
+    advancedemo = true;
+}
+
+//
+// D_StartTitle
+//
+void D_StartTitle (void)
+{
+    gameaction = ga_nothing;
+    demosequence = -1;
+    D_AdvanceDemo ();
+}
+
+
+void H_memcpy (void *dest, void *src, int count)
+{
+    int             i;
+
+    if (( ( (long)dest | (long)src | count) & 3) == 0 )
+    {
+        count>>=2;
+        for (i=0 ; i<count ; i++)
+            ((int *)dest)[i] = ((int *)src)[i];
+    }
+    else
+        for (i=0 ; i<count ; i++)
+            ((byte *)dest)[i] = ((byte *)src)[i];
+}
+

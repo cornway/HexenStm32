@@ -16,7 +16,6 @@
 //
 // Chat mode stuff
 //
-#ifdef ENG_HEXEN
 
 #ifndef HEXEN_CT_CHAT_H
 #define HEXEN_CT_CHAT_H
@@ -37,4 +36,3 @@ extern char *chat_macros[10];
 
 #endif
 
-#endif /*ENG_HEXEN*/

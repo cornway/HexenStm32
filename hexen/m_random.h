@@ -13,7 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
 
 #ifndef HEXEN_M_RANDOM_H
 #define HEXEN_M_RANDOM_H
@@ -36,4 +35,3 @@ int P_SubRandom (void);
 
 #endif // HEXEN_M_RANDOM_H
 
-#endif /*ENG_HEXEN*/

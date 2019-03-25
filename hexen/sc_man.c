@@ -40,7 +40,7 @@
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 static void CheckOpen(void);
-static void OpenScript(char *name, int type);
+static void OpenScript(const char *name, int type);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -52,7 +52,7 @@ int sc_Line;
 boolean sc_End;
 boolean sc_Crossed;
 boolean sc_FileScripts = false;
-char *sc_ScriptsDir = "";
+const char *sc_ScriptsDir = "";
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -74,7 +74,7 @@ static boolean AlreadyGot = false;
 //
 //==========================================================================
 
-void SC_Open(char *name)
+void SC_Open(const char *name)
 {
     char fileName[128];
 
@@ -97,7 +97,7 @@ void SC_Open(char *name)
 //
 //==========================================================================
 
-void SC_OpenLump(char *name)
+void SC_OpenLump(const char *name)
 {
     OpenScript(name, LUMP_SCRIPT);
 }
@@ -111,7 +111,7 @@ void SC_OpenLump(char *name)
 //
 //==========================================================================
 
-void SC_OpenFile(char *name)
+void SC_OpenFile(const char *name)
 {
     OpenScript(name, FILE_ZONE_SCRIPT);
 }
@@ -122,12 +122,12 @@ void SC_OpenFile(char *name)
 //
 //==========================================================================
 
-static void OpenScript(char *name, int type)
+static void OpenScript(const char *name, int type)
 {
     SC_Close();
     if (type == LUMP_SCRIPT)
     {                           // Lump script
-        ScriptLumpNum = W_GetNumForName(name);
+        ScriptLumpNum = W_GetNumForName((char *)name);
         ScriptBuffer = (char *) W_CacheLumpNum(ScriptLumpNum, PU_STATIC);
         ScriptSize = W_LumpLength(ScriptLumpNum);
         M_StringCopy(ScriptName, name, sizeof(ScriptName));
@@ -135,8 +135,8 @@ static void OpenScript(char *name, int type)
     else if (type == FILE_ZONE_SCRIPT)
     {                           // File script - zone
         ScriptLumpNum = -1;
-        ScriptSize = M_ReadFile(name, (byte **) & ScriptBuffer);
-        M_ExtractFileBase(name, ScriptName);
+        ScriptSize = M_ReadFile((char *)name, (byte **) & ScriptBuffer);
+        M_ExtractFileBase((char *)name, ScriptName);
     }
     ScriptPtr = ScriptBuffer;
     ScriptEndPtr = ScriptPtr + ScriptSize;
@@ -195,13 +195,8 @@ boolean SC_GetString(void)
     }
     while (foundToken == false)
     {
-        while (*ScriptPtr <= 32)
+        while (ScriptPtr < ScriptEndPtr && *ScriptPtr <= 32)
         {
-            if (ScriptPtr >= ScriptEndPtr)
-            {
-                sc_End = true;
-                return false;
-            }
             if (*ScriptPtr++ == '\n')
             {
                 sc_Line++;
@@ -393,7 +388,7 @@ boolean SC_Check(void)
 //
 //==========================================================================
 
-int SC_MatchString(char **strings)
+int SC_MatchString(const char **strings)
 {
     int i;
 
@@ -413,7 +408,7 @@ int SC_MatchString(char **strings)
 //
 //==========================================================================
 
-int SC_MustMatchString(char **strings)
+int SC_MustMatchString(const char **strings)
 {
     int i;
 
@@ -431,7 +426,7 @@ int SC_MustMatchString(char **strings)
 //
 //==========================================================================
 
-boolean SC_Compare(char *text)
+boolean SC_Compare(const char *text)
 {
     if (strcasecmp(text, sc_String) == 0)
     {
@@ -446,7 +441,7 @@ boolean SC_Compare(char *text)
 //
 //==========================================================================
 
-void SC_ScriptError(char *message)
+void SC_ScriptError(const char *message)
 {
     if (message == NULL)
     {

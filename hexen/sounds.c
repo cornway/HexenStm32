@@ -13,7 +13,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
+
 
 #include "h2def.h"
 #include "sounds.h"
@@ -311,5 +311,3 @@ sfxinfo_t S_sfx[] = {
     SOUND("PuppyBeat", 30, 2, 1),
     SOUND("MysticIncant", 32, 4, 1),
 };
-
-#endif /*ENG_HEXEN*/

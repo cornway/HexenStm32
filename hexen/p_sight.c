@@ -14,7 +14,6 @@
 // GNU General Public License for more details.
 //
 
-#ifdef ENG_HEXEN
 
 #include "h2def.h"
 #include "p_local.h"
@@ -398,5 +397,3 @@ boolean P_CheckSight(mobj_t * t1, mobj_t * t2)
 
     return P_SightPathTraverse(t1->x, t1->y, t2->x, t2->y);
 }
-
-#endif /*ENG_HEXEN*/

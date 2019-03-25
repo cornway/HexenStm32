@@ -14,7 +14,7 @@
 // GNU General Public License for more details.
 //
 
-#ifdef ENG_HEXEN
+
 // HEADER FILES ------------------------------------------------------------
 
 #include "h2def.h"
@@ -149,5 +149,3 @@ void P_RemoveThinker(thinker_t * thinker)
 {
     thinker->function = (think_t) - 1;
 }
-
-#endif

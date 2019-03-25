@@ -13,7 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
 
 #include "h2def.h"
 #include "m_random.h"
@@ -50,6 +49,9 @@ static int cd_current_track = 0;
 // and should be looped. Zero if we are not currently playing a track:
 static int cd_track_end_time = 0;
 
+int snd_SfxVolume = 50;
+int sfxVolume = 50;
+int musicVolume = 4;
 /*
 ===============================================================================
 
@@ -242,7 +244,7 @@ int S_GetCurrentCDTrack(void)
 //
 //==========================================================================
 
-void S_StartSongName(char *songLump, boolean loop)
+void S_StartSongName(const char *songLump, boolean loop)
 {
     int lumpnum;
     int cdTrack;
@@ -297,7 +299,7 @@ void S_StartSongName(char *songLump, boolean loop)
             RegisteredSong = NULL;
         }
 
-        lumpnum = W_GetNumForName(songLump);
+        lumpnum = W_GetNumForName((char *)songLump);
         Mus_SndPtr = W_CacheLumpNum(lumpnum, PU_MUSIC);
         length = W_LumpLength(lumpnum);
 
@@ -502,7 +504,11 @@ void S_StartSoundAtVolume(mobj_t * origin, int sound_id, int volume)
     // if the sfxinfo_t is marked as 'can be pitch shifted'
     if (S_sfx[sound_id].pitch)
     {
-			/*TODO:*/
+        Channel[i].pitch = (byte) (NORM_PITCH + (M_Random() & 7) - (M_Random() & 7));
+    }
+    else
+    {
+        Channel[i].pitch = NORM_PITCH;
     }
 
     if (S_sfx[sound_id].lumpnum == 0)
@@ -783,7 +789,8 @@ void S_UpdateSounds(mobj_t * listener)
 
 void S_Init(void)
 {
-    //I_SetOPLDriverVer(opl_doom2_1_666);
+#if 0
+    I_SetOPLDriverVer(opl_doom2_1_666);
     SoundCurve = W_CacheLumpName("SNDCURVE", PU_STATIC);
 //      SoundCurve = Z_Malloc(MAX_SND_DIST, PU_STATIC, NULL);
 
@@ -794,13 +801,13 @@ void S_Init(void)
     I_SetMusicVolume(snd_MusicVolume * 8);
 
     I_AtExit(S_ShutDown, true);
-#if 0
+
     // Hexen defaults to pitch-shifting on
     if (snd_pitchshift == -1)
     {
         snd_pitchshift = 1;
     }
-#endif
+
     I_PrecacheSounds(S_sfx, NUMSFX);
 
     // Attempt to setup CD music
@@ -828,6 +835,7 @@ void S_Init(void)
 
         I_CDMusPrintStartup();
     }
+#endif
 }
 
 //==========================================================================
@@ -1006,4 +1014,13 @@ void S_InitScript(void)
     }
 }
 
-#endif /*ENG_HEXEN*/
+void S_SetSfxVolume(int volume)
+{
+    if (volume < 0 || volume > 127)
+    {
+        I_Error("Attempt to set sfx volume at %d", volume);
+    }
+
+    snd_SfxVolume = volume;
+}
+

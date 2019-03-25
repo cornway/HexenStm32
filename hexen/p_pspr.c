@@ -13,7 +13,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
+
 
 // HEADER FILES ------------------------------------------------------------
 
@@ -1192,7 +1192,7 @@ void A_MStaffAttack(player_t * player, pspdef_t * psp)
         player->bonuscount = 0;
         I_SetPalette((byte *) W_CacheLumpNum(W_GetNumForName("playpal"),
                                              PU_CACHE) +
-                     STARTSCOURGEPAL * 768);
+                     STARTSCOURGEPAL * 768, 0);
     }
 }
 
@@ -1214,7 +1214,7 @@ void A_MStaffPalette(player_t * player, pspdef_t * psp)
             pal = 0;
         }
         I_SetPalette((byte *) W_CacheLumpNum(W_GetNumForName("playpal"),
-                                             PU_CACHE) + pal * 768);
+                                             PU_CACHE) + pal * 768, 0);
     }
 }
 
@@ -1933,7 +1933,7 @@ void A_CHolyAttack(player_t * player, pspdef_t * psp)
         player->damagecount = 0;
         player->bonuscount = 0;
         I_SetPalette((byte *) W_CacheLumpNum(W_GetNumForName("playpal"),
-                                             PU_CACHE) + STARTHOLYPAL * 768);
+                                             PU_CACHE) + STARTHOLYPAL * 768, 0);
     }
     S_StartSound(player->mo, SFX_CHOLY_FIRE);
 }
@@ -1956,7 +1956,7 @@ void A_CHolyPalette(player_t * player, pspdef_t * psp)
             pal = 0;
         }
         I_SetPalette((byte *) W_CacheLumpNum(W_GetNumForName("playpal"),
-                                             PU_CACHE) + pal * 768);
+                                             PU_CACHE) + pal * 768, 0);
     }
 }
 
@@ -2478,5 +2478,3 @@ void P_MovePsprites(player_t * player)
     player->psprites[ps_flash].sx = player->psprites[ps_weapon].sx;
     player->psprites[ps_flash].sy = player->psprites[ps_weapon].sy;
 }
-
-#endif /*ENG_HEXEN*/

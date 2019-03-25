@@ -13,7 +13,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
+
 
 // MN_menu.c ---------------------------------------------------------------
 
@@ -170,5 +170,3 @@
 
 #define AMSTR_FOLLOWON		"FOLLOW MODE ON"
 #define AMSTR_FOLLOWOFF		"FOLLOW MODE OFF"
-
-#endif /*ENG_HEXEN*/

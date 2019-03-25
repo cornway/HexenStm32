@@ -13,7 +13,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
+
 
 #include "h2def.h"
 #include "i_system.h"
@@ -1068,5 +1068,3 @@ static mobj_t *RoughBlockCheck(mobj_t * mo, int index)
     }
     return NULL;
 }
-
-#endif /*ENG_HEXEN*/

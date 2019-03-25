@@ -13,7 +13,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
+
 
 extern int *TerrainTypes;
 
@@ -570,4 +570,44 @@ boolean EV_ThingDeactivate(int tid);
 boolean EV_ThingRemove(int tid);
 boolean EV_ThingDestroy(int tid);
 
-#endif /*ENG_HEXEN*/
+
+typedef struct
+{
+    thinker_t	thinker;
+    sector_t*	sector;
+    int		minlight;
+    int		maxlight;
+    int		direction;
+
+} glow_t;
+
+
+#define GLOWSPEED			8
+#define STROBEBRIGHT		5
+#define FASTDARK			15
+#define SLOWDARK			35
+
+typedef struct
+{
+    thinker_t	thinker;
+    sector_t*	sector;
+    int		count;
+    int		maxlight;
+    int		minlight;
+    int		maxtime;
+    int		mintime;
+    
+} lightflash_t;
+
+typedef struct
+{
+    thinker_t	thinker;
+    sector_t*	sector;
+    int		count;
+    int		minlight;
+    int		maxlight;
+    int		darktime;
+    int		brighttime;
+    
+} strobe_t;
+

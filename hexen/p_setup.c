@@ -13,7 +13,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
+
 
 // HEADER FILES ------------------------------------------------------------
 
@@ -113,7 +113,7 @@ byte *rejectmatrix;             // for fast sight rejection
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static mapInfo_t MapInfo[99];
-static char *MapCmdNames[] = {
+static const char *MapCmdNames[] = {
     "SKY1",
     "SKY2",
     "DOUBLESKY",
@@ -1229,5 +1229,3 @@ void My_Debug(void)
 	}
 }
 */
-
-#endif /*ENG_HEXEN*/

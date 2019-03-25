@@ -14,7 +14,7 @@
 // GNU General Public License for more details.
 //
 
-#ifdef ENG_HEXEN
+
 // HEADER FILES ------------------------------------------------------------
 
 #include "h2def.h"
@@ -2467,5 +2467,3 @@ mobj_t *P_SpawnKoraxMissile(fixed_t x, fixed_t y, fixed_t z,
     th->momz = (dest->z - z + (30 * FRACUNIT)) / dist;
     return (P_CheckMissileSpawn(th) ? th : NULL);
 }
-
-#endif /*ENG_HEXEN*/

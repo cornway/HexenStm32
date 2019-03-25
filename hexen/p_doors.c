@@ -13,7 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
 
 
 #include "h2def.h"
@@ -317,5 +316,3 @@ void P_SpawnDoorRaiseIn5Mins(sector_t *sec, int secnum)
 	door->topcountdown = 5*60*35;
 }
 */
-
-#endif /*ENG_HEXEN*/

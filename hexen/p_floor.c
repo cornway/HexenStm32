@@ -13,7 +13,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-#ifdef ENG_HEXEN
+
 
 #include "h2def.h"
 #include "i_system.h"
@@ -942,5 +942,3 @@ boolean EV_StartFloorWaggle(int tag, int height, int speed, int offset,
     }
     return retCode;
 }
-
-#endif ENG_HEXEN

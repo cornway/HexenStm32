@@ -114,7 +114,7 @@ static const byte netnotchTable[] = {
 // ST_Init - Do the startup screen
 //
 //==========================================================================
-#ifdef ENG_HEXEN
+
 void ST_Init(void)
 {
     byte *pal;
@@ -130,7 +130,7 @@ void ST_Init(void)
         if (I_SetVideoModeHR())
         {
             using_graphical_startup = true;
-            I_InitWindowIcon();
+            //I_InitWindowIcon();
 
             S_StartSongName("orb", true);
 
@@ -149,7 +149,7 @@ void ST_Init(void)
         }
     }
 }
-#endif /*ENG_HEXEN*/
+
 void ST_Done(void)
 {
     if (using_graphical_startup)
@@ -215,7 +215,7 @@ void ST_Progress(void)
         }
     }
 
-    printf(".");
+    dprintf(".");
 }
 
 
@@ -227,7 +227,7 @@ void ST_Progress(void)
 
 void ST_NetProgress(void)
 {
-    printf("*");
+    dprintf("*");
 
     if (using_graphical_startup)
     {
@@ -263,8 +263,13 @@ void ST_NetDone(void)
 //
 //==========================================================================
 
-void ST_Message(char *message, ...)
+void ST_Message(const char *message, ...)
 {
+    va_list argptr;
+
+    va_start(argptr, message);
+    vprintf(message, argptr);
+    va_end(argptr);
 }
 
 //==========================================================================
@@ -273,8 +278,13 @@ void ST_Message(char *message, ...)
 //
 //==========================================================================
 
-void ST_RealMessage(char *message, ...)
+void ST_RealMessage(const char *message, ...)
 {
+    va_list argptr;
+
+    va_start(argptr, message);
+    vprintf(message, argptr);
+    va_end(argptr);
 }
 
 
