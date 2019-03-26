@@ -409,6 +409,7 @@ void R_InitTextures(void)
         R_GenerateLookup(i);
         if (!(i & 31))
             ST_Progress();
+        audio_update();
     }
 
 //
@@ -469,6 +470,7 @@ void R_InitSpriteLumps(void)
     {
         if (!(i & 127))
             ST_Progress();
+        audio_update();
         patch = W_CacheLumpNum(firstspritelump + i, PU_CACHE);
         spritewidth[i] = SHORT(patch->width) << FRACBITS;
         spriteoffset[i] = SHORT(patch->leftoffset) << FRACBITS;

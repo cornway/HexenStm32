@@ -1018,7 +1018,8 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep, i
 
     // play sound
     snd->chunk.cache = (void **)&snd->chunk.abuf;
-    snd->chunk.loopstart = 0;
+    snd->chunk.loopstart = -1;
+    snd->chunk.volume = vol;
     a = audio_play_channel(&snd->chunk, channel);
     if (a) {
         a->complete = NULL;

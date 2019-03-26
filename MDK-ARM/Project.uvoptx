@@ -150,9 +150,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>459</LineNumber>
+          <LineNumber>426</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134281638</Address>
+          <Address>134281584</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -161,39 +161,55 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\hexen\h2_main.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\Project\../hexen/h2_main.c\459</Expression>
+          <Expression>\\Project\../hexen/h2_main.c\426</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>279</LineNumber>
+          <LineNumber>838</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134488052</Address>
+          <Address>134311850</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\doom\src\chocdoom\w_wad.c</Filename>
+          <Filename>..\hexen\h2_main.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\Project\../doom/src/chocdoom/w_wad.c\279</Expression>
+          <Expression>\\Project\../hexen/h2_main.c\838</Expression>
         </Bp>
         <Bp>
           <Number>2</Number>
           <Type>0</Type>
-          <LineNumber>210</LineNumber>
+          <LineNumber>941</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134487820</Address>
+          <Address>134286920</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\doom\src\chocdoom\w_wad.c</Filename>
+          <Filename>..\hexen\h2_main.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\Project\../doom/src/chocdoom/w_wad.c\210</Expression>
+          <Expression>\\Project\../hexen/h2_main.c\941</Expression>
+        </Bp>
+        <Bp>
+          <Number>3</Number>
+          <Type>2</Type>
+          <LineNumber>0</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>-1073730532</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>1</ManyObjects>
+          <SizeOfObject>4</SizeOfObject>
+          <BreakByAccess>2</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename></Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>0xc0002c1c</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -281,6 +297,11 @@
           <count>16</count>
           <WinNumber>1</WinNumber>
           <ItemText>iwads</ItemText>
+        </Ww>
+        <Ww>
+          <count>17</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>channels</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
@@ -1979,7 +2000,7 @@
 
   <Group>
     <GroupName>doom</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>

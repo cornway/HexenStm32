@@ -836,6 +836,8 @@ void H2_GameLoop(void)
         S_UpdateSounds(players[displayplayer].mo);
 
         DrawAndBlit();
+
+        audio_update();
     }
 }
 
