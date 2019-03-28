@@ -354,7 +354,7 @@ void SN_StartSequenceName(mobj_t * mobj, char *name)
 
     for (i = 0; i < SEQ_NUMSEQ; i++)
     {
-        if (!strcmp(name, SequenceTranslate[i].name))
+        if (!H_strcmp(name, SequenceTranslate[i].name))
         {
             SN_StartSequence(mobj, i);
             return;

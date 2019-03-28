@@ -192,11 +192,11 @@ static void D_SetDefaultSavePath(void)
 {
     SavePath = M_GetSaveGameDir("hexen.wad");
 
-    if (!strcmp(SavePath, ""))
+    if (!H_strcmp(SavePath, ""))
     {
         // only get hexen.cfg path if one is not already found
 
-        if (SavePathConfig == NULL || !strcmp(SavePathConfig, ""))
+        if (SavePathConfig == NULL || !H_strcmp(SavePathConfig, ""))
         {
             // If we are not using a savegame path (probably because we are on
             // Windows and not using a config dir), behave like Vanilla Hexen
@@ -1180,4 +1180,21 @@ void H_memcpy (void *dest, void *src, int count)
         for (i=0 ; i<count ; i++)
             ((byte *)dest)[i] = ((byte *)src)[i];
 }
+
+int H_strcmp (char *s1, char *s2)
+{
+    while (1)
+    {
+        if (*s1 != *s2)
+            return -1;              // strings not equal    
+        if (!*s1)
+            return 0;               // strings are equal
+        s1++;
+        s2++;
+    }
+
+    return -1;
+}
+
+
 

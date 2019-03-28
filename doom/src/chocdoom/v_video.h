@@ -47,6 +47,9 @@ extern pal_t *p_palette;
 #define pixel(p) (p)
 #endif
 
+#define D_SCREEN_PIX_CNT (SCREENHEIGHT * SCREENWIDTH)
+#define D_SCREEN_BYTE_CNT (D_SCREEN_PIX_CNT * sizeof(pix_t))
+
 static inline void
 v_copy_line (pix_t *dest, byte *src, size_t cnt)
 {

@@ -3199,10 +3199,10 @@ static void ClearSaveSlot(int slot)
     {
         M_snprintf(fileName, sizeof(fileName),
                    "%shex%d%02d.hxs", SavePath, slot, i);
-        remove(fileName);
+        d_unlink(fileName);
     }
     M_snprintf(fileName, sizeof(fileName), "%shex%d.hxs", SavePath, slot);
-    remove(fileName);
+    d_unlink(fileName);
 }
 
 //==========================================================================

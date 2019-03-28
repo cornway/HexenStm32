@@ -185,9 +185,9 @@ W_SetAltPkgType (lumpinfo_t *lump)
     if (game_alt_pkg != pkg_none) {
         return;
     }
-    if (!strcmp(GAME_3D0_PKG_MARKER, lump->name)) {
+    if (!H_strcmp(GAME_3D0_PKG_MARKER, lump->name)) {
         pkg = pkg_3d0_doom;
-    } else if (!strcmp(GAME_PSX_PKG_MARKER, lump->name)) {
+    } else if (!H_strcmp(GAME_PSX_PKG_MARKER, lump->name)) {
         pkg = pkg_psx_final;
     }
     game_alt_pkg = pkg;

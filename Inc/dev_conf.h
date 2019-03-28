@@ -18,4 +18,6 @@
 
 #define AUDIO_SAMPLE_RATE 22050U
 
+#define SDRAM_VOL_END   0xC0feb000
+
 #endif /*__DEV_CONF_H__*/

@@ -1566,7 +1566,7 @@ static default_t *SearchCollection(default_collection_t *collection, char *name)
 
     for (i=0; i<collection->numdefaults; ++i) 
     {
-        if (!strcmp(name, collection->defaults[i].name))
+        if (!H_strcmp(name, collection->defaults[i].name))
         {
             return &collection->defaults[i];
         }
@@ -2086,7 +2086,7 @@ void M_SetConfigDir(char *dir)
         configdir = GetDefaultConfigDir();
     }
 
-    if (strcmp(configdir, "") != 0)
+    if (H_strcmp(configdir, "") != 0)
     {
     }
 
@@ -2110,7 +2110,7 @@ char *M_GetSaveGameDir(char *iwadname)
     // If not "doing" a configuration directory (Windows), don't "do"
     // a savegame directory, either.
 
-    if (!strcmp(configdir, ""))
+    if (!H_strcmp(configdir, ""))
     {
     	savegamedir = strdup("");
     }

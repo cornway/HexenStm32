@@ -693,7 +693,7 @@ static boolean ReadDescriptionForSlot(int slot, char *description)
     found = d_read(fp, description, HXS_DESCRIPTION_LENGTH) == HXS_DESCRIPTION_LENGTH
          && d_read(fp, versionText, HXS_VERSION_TEXT_LENGTH) == HXS_VERSION_TEXT_LENGTH;
 
-    found = found && strcmp(versionText, HXS_VERSION_TEXT) == 0;
+    found = found && H_strcmp(versionText, HXS_VERSION_TEXT) == 0;
 
     d_close(fp);
 

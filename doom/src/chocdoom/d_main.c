@@ -970,7 +970,7 @@ static void InitGameVersion(void)
     {
         for (i=0; gameversions[i].description != NULL; ++i)
         {
-            if (!strcmp(myargv[p+1], gameversions[i].cmdline))
+            if (!H_strcmp(myargv[p+1], gameversions[i].cmdline))
             {
                 gameversion = gameversions[i].version;
                 break;

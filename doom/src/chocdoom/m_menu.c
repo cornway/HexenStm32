@@ -718,7 +718,7 @@ void M_SaveSelect(int choice)
     
     saveSlot = choice;
     M_StringCopy(saveOldString,savegamestrings[choice], SAVESTRINGSIZE);
-    if (!strcmp(savegamestrings[choice], EMPTYSTRING))
+    if (!H_strcmp(savegamestrings[choice], EMPTYSTRING))
     {
     	savegamestrings[choice][0] = 0x31 + choice;
     	savegamestrings[choice][1] = 0;

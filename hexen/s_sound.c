@@ -258,23 +258,23 @@ void S_StartSongName(const char *songLump, boolean loop)
     {
         cdTrack = 0;
 
-        if (!strcmp(songLump, "hexen"))
+        if (!H_strcmp(songLump, "hexen"))
         {
             cdTrack = P_GetCDTitleTrack();
         }
-        else if (!strcmp(songLump, "hub"))
+        else if (!H_strcmp(songLump, "hub"))
         {
             cdTrack = P_GetCDIntermissionTrack();
         }
-        else if (!strcmp(songLump, "hall"))
+        else if (!H_strcmp(songLump, "hall"))
         {
             cdTrack = P_GetCDEnd1Track();
         }
-        else if (!strcmp(songLump, "orb"))
+        else if (!H_strcmp(songLump, "orb"))
         {
             cdTrack = P_GetCDEnd2Track();
         }
-        else if (!strcmp(songLump, "chess") && cd_custom_track == 0)
+        else if (!H_strcmp(songLump, "chess") && cd_custom_track == 0)
         {
             cdTrack = P_GetCDEnd3Track();
         }
@@ -322,7 +322,7 @@ int S_GetSoundID(char *name)
 
     for (i = 0; i < NUMSFX; i++)
     {
-        if (!strcmp(S_sfx[i].tagname, name))
+        if (!H_strcmp(S_sfx[i].tagname, name))
         {
             return i;
         }
@@ -981,7 +981,7 @@ void S_InitScript(void)
         {
             for (i = 0; i < NUMSFX; i++)
             {
-                if (!strcmp(S_sfx[i].tagname, sc_String))
+                if (!H_strcmp(S_sfx[i].tagname, sc_String))
                 {
                     SC_MustGetString();
                     if (*sc_String != '?')
@@ -1007,7 +1007,7 @@ void S_InitScript(void)
 
     for (i = 0; i < NUMSFX; i++)
     {
-        if (!strcmp(S_sfx[i].name, ""))
+        if (!H_strcmp(S_sfx[i].name, ""))
         {
             M_StringCopy(S_sfx[i].name, "default", sizeof(S_sfx[i].name));
         }

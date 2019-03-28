@@ -44,9 +44,6 @@
 #error "ARGB rendering broken!"
 #endif
 
-#define D_SCREEN_PIX_CNT (SCREENHEIGHT * SCREENWIDTH)
-#define D_SCREEN_BYTE_CNT (D_SCREEN_PIX_CNT * sizeof(pix_t))
-
 #ifndef MAX
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #endif
@@ -54,15 +51,6 @@
 #ifndef MIN
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #endif
-
-#define IVID_IRAM 1
-
-// The screen buffer; this is modified to draw things to the screen
-
-#if IVID_IRAM
-pix_t I_VideoBuffer_static[D_SCREEN_PIX_CNT];
-#endif
-pix_t *I_VideoBuffer = NULL;
 
 // If true, game is running as a screensaver
 
@@ -505,11 +493,6 @@ void I_GetEvent (void)
 void I_InitGraphics (void)
 {
     screen_t screen;
-#if !IVID_IRAM
-    I_VideoBuffer = (pix_t*)Z_Malloc (D_SCREEN_BYTE_CNT, PU_STATIC, NULL);
-#else
-    I_VideoBuffer = I_VideoBuffer_static;
-#endif
 	screenvisible = true;
     p_palette = rgb_palette;
     screen.buf = NULL;

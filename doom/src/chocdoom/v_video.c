@@ -41,6 +41,16 @@
 #include <png.h>
 #endif
 
+#define IVID_IRAM 1
+
+// The screen buffer; this is modified to draw things to the screen
+
+#if IVID_IRAM
+pix_t I_VideoBuffer_static[D_SCREEN_PIX_CNT];
+#endif
+pix_t *I_VideoBuffer = NULL;
+
+
 // TODO: There are separate RANGECHECK defines for different games, but this
 // is common code. Fix this.
 //#define RANGECHECK
@@ -608,12 +618,19 @@ void V_DrawRawScreen(byte *raw)
 //
 // V_Init
 // 
+void **scrptr;
 void V_Init (void) 
 { 
     // no-op!
     // There used to be separate screens that could be drawn to; these are
     // now handled in the upper layers.
-    dest_screen = I_VideoBuffer;
+#if !IVID_IRAM
+    I_VideoBuffer = (pix_t*)Z_Malloc (D_SCREEN_BYTE_CNT, PU_STATIC, NULL);
+#else
+    I_VideoBuffer = I_VideoBuffer_static;
+#endif
+    scrptr = (void **)&dest_screen;
+    V_RestoreBuffer();
 }
 
 // Set the buffer that the code draws to.

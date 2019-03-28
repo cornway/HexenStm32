@@ -279,13 +279,13 @@ static void AddSpriteLump(lumpinfo_t *lump)
     if (!ValidSpriteLumpName(lump->name))
         return;
 
-    if (strcmp(lump->name, "SHT2A0")/* && !BTSX*/)
+    if (H_strcmp(lump->name, "SHT2A0")/* && !BTSX*/)
         SHT2A0 = true;
 
     if (!ispackagewad)
     {
-        MISFA0 += strcmp(lump->name, "MISFA0");
-        MISFB0 += strcmp(lump->name, "MISFB0");
+        MISFA0 += H_strcmp(lump->name, "MISFA0");
+        MISFB0 += H_strcmp(lump->name, "MISFB0");
 
         while (*weaponsprites[i].spr1)
         {   /*

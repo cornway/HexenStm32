@@ -428,7 +428,7 @@ static char *CheckDirectoryHasIWAD(char *dir, char *iwadname)
     // Construct the full path to the IWAD if it is located in
     // this directory, and check if it exists.
 
-    if (!strcmp(dir, "."))
+    if (!H_strcmp(dir, "."))
     {
         filename = strdup(iwadname);
     }

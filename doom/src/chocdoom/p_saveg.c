@@ -1529,7 +1529,7 @@ boolean P_ReadSaveGameHeader(void)
 
     memset(vcheck, 0, sizeof(vcheck));
     M_snprintf(vcheck, sizeof(vcheck), "version %i", G_VanillaVersionCode());
-    if (strcmp(read_vcheck, vcheck) != 0)
+    if (H_strcmp(read_vcheck, vcheck) != 0)
 	return false;				// bad version 
 
     gameskill = (skill_t)saveg_read8();
