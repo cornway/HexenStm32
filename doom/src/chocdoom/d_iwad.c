@@ -214,12 +214,12 @@ static char *GetRegistryString(registry_value_t *reg_val)
     {
         // Allocate a buffer for the value and read the value
 
-        result = malloc(len);
+        result = Sys_Malloc(len);
 
         if (RegQueryValueEx(key, reg_val->value, NULL, &valtype,
                             (unsigned char *) result, &len) != ERROR_SUCCESS)
         {
-            free(result);
+            Sys_Free(result);
             result = NULL;
         }
     }
@@ -254,7 +254,7 @@ static void CheckUninstallStrings(void)
 
         if (unstr == NULL)
         {
-            free(val);
+            Sys_Free(val);
         }
         else
         {
@@ -351,7 +351,7 @@ static void CheckSteamGUSPatches(void)
     }
 
     len = strlen(install_path) + strlen(STEAM_BFG_GUS_PATCHES) + 20;
-    patch_path = malloc(len);
+    patch_path = Sys_Malloc(len);
     M_snprintf(patch_path, len, "%s\\%s\\ACBASS.PAT",
                install_path, STEAM_BFG_GUS_PATCHES);
 
@@ -363,8 +363,8 @@ static void CheckSteamGUSPatches(void)
         M_SetVariable("gus_patch_path", patch_path);
     }
 
-    free(patch_path);
-    free(install_path);
+    Sys_Free(patch_path);
+    Sys_Free(install_path);
 }
 
 // Default install directories for DOS Doom
@@ -442,7 +442,7 @@ static char *CheckDirectoryHasIWAD(char *dir, char *iwadname)
         return filename;
     }
 
-    free(filename);
+    Sys_Free(filename);
 
     return NULL;
 }
@@ -664,7 +664,7 @@ char *D_FindWADByName(char *name)
         }
     }
 
-    free(path);
+    Sys_Free(path);
     // File not found
 
     return NULL;
@@ -766,7 +766,7 @@ const iwad_t **D_FindAllIWADs(int mask)
     char *filename;
     int i;
 
-    result = (const iwad_t **)malloc(sizeof(iwad_t *) * (arrlen(iwads) + 1));
+    result = (const iwad_t **)Sys_Malloc(sizeof(iwad_t *) * (arrlen(iwads) + 1));
     result_len = 0;
 
     // Try to find all IWADs

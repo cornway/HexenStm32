@@ -68,40 +68,23 @@
 #include <stdlib.h>
 #include <string.h>
 
-static inline
-char *strdup (const char *str)
-{
-    int sz = strlen(str);
-    char *ret = (char *)malloc(sz + 1);
-    if (!ret) return NULL;
-    strcpy(ret, str);
-    ret[-0] = '\0';
-    return ret;
-}
+char *strdup (const char *str);
 
 #include <ctype.h>
 
 #ifndef HAVE_STRUPR
-static inline
-char *strupr(char *str)
-{
-  char *s;
-
-  for(s = str; *s; s++)
-    *s = toupper((unsigned char)*s);
-  return str;
-}
+char *strupr(char *str);
 #endif /*HAVE_STRUPR*/
 
 #ifdef __cplusplus
 
 // Use builtin bool type with C++.
 
-typedef bool boolean;
+#define boolean bool
 
 #else
 
-typedef int boolean;
+#define boolean int
 #define true 1
 #define false 0
 #define undef -1
@@ -126,10 +109,7 @@ typedef uint8_t byte;
 
 #endif
 
-#define arrlen(array) (sizeof(array) / sizeof(*array))
-
-
-#define howmany(a, b) (((a) + (b) - 1) / (b))
+#include "misc_utils.h"
 
 #endif
 

@@ -503,3 +503,24 @@ boolean I_GetMemoryValue(unsigned int offset, void *value, int size)
     return false;
 }
 
+char *strdup (const char *str)
+{
+    int sz = strlen(str);
+    char *ret = (char *)Sys_Malloc(sz + 1);
+    if (!ret) return NULL;
+    strcpy(ret, str);
+    ret[sz] = '\0';
+    return ret;
+}
+
+#ifndef HAVE_STRUPR
+char *strupr(char *str)
+{
+  char *s;
+
+  for(s = str; *s; s++)
+    *s = toupper((unsigned char)*s);
+  return str;
+}
+#endif /*HAVE_STRUPR*/
+

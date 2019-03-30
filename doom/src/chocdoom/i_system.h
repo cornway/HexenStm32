@@ -22,6 +22,7 @@
 
 #include "d_ticcmd.h"
 #include "d_event.h"
+#include "misc_utils.h"
 
 typedef void (*atexit_func_t)(void);
 

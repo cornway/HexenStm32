@@ -1119,7 +1119,7 @@ static void LoadIwadDeh(void)
         if (sep != NULL)
         {
             size_t chex_deh_len = strlen(iwadfile) + 9;
-            chex_deh = malloc(chex_deh_len);
+            chex_deh = Sys_Malloc(chex_deh_len);
             M_StringCopy(chex_deh, iwadfile, chex_deh_len);
             chex_deh[sep - iwadfile + 1] = '\0';
             M_StringConcat(chex_deh, "chex.deh", chex_deh_len);
@@ -1133,7 +1133,7 @@ static void LoadIwadDeh(void)
         // search path instead.  We might find it...
         if (!M_FileExists(chex_deh))
         {
-            free(chex_deh);
+            Sys_Free(chex_deh);
             chex_deh = D_FindWADByName("chex.deh");
         }
 

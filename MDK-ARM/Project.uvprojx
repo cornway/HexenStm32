@@ -835,6 +835,16 @@
               <FileType>1</FileType>
               <FilePath>..\common\nvic.c</FilePath>
             </File>
+            <File>
+              <FileName>hdmi_mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\common\hdmi_mem.c</FilePath>
+            </File>
+            <File>
+              <FileName>misc_utils.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\common\inc\misc_utils.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

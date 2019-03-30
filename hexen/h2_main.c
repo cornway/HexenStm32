@@ -202,7 +202,7 @@ static void D_SetDefaultSavePath(void)
             // Windows and not using a config dir), behave like Vanilla Hexen
             // and use hexndata/:
 
-            SavePath = malloc(10);
+            SavePath = Sys_Malloc(10);
             M_snprintf(SavePath, 10, "hexndata%c", DIR_SEPARATOR);
         }
 #if 0
@@ -725,7 +725,7 @@ static void HandleArgs(void)
             M_StringConcat(file, ".lmp", sizeof(file));
         }
 
-        free(uc_filename);
+        Sys_Free(uc_filename);
 
         if (W_AddFile(file) != NULL)
         {

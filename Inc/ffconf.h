@@ -316,11 +316,11 @@
 #endif
 
 #if !defined(ff_malloc)
-#define ff_malloc malloc
+#define ff_malloc Sys_Malloc
 #endif
 
 #if !defined(ff_free)
-#define ff_free free
+#define ff_free Sys_Free
 #endif
 #endif
 /*--- End of configuration options ---*/

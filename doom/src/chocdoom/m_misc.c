@@ -57,9 +57,9 @@ void M_MakeDirectory(char *path)
 #ifdef _WIN32
     mkdir(path);
 #else
-	#if ORIGCODE
+#if ORIGCODE
     mkdir(path, 0755);
-	#else
+#else
     FRESULT res;
     char* path_mod;
     int len;
@@ -67,24 +67,22 @@ void M_MakeDirectory(char *path)
     // remove trailing slash
     len = strlen (path);
 
-    path_mod = (char*)malloc (len + 1);
+    path_mod = (char*)Sys_Malloc (len + 1);
 
     strncpy (path_mod, path, len);
 
     if (path_mod[len - 1] == '/')
     {
-    	path_mod[len - 1] = 0;
+        path_mod[len - 1] = 0;
     }
 
-    res = f_mkdir (path_mod);
-
-    if ((res != FR_OK) && (res != FR_EXIST))
+    if (d_mkdir (path_mod) < 0)
     {
-    	I_Error ("M_MakeDirectory: path = '%s', path_mod = '%s', res = %i", path, path_mod, res);
+        I_Error ("M_MakeDirectory: path = '%s', path_mod = '%s', res = %i", path, path_mod, res);
     }
 
-    free (path_mod);
-	#endif
+    Sys_Free (path_mod);
+#endif
 #endif
 }
 
@@ -401,7 +399,7 @@ char *M_StringReplace(const char *haystack, const char *needle,
 
     // Construct new string.
 
-    result = malloc(result_len);
+    result = Sys_Malloc(result_len);
     if (result == NULL)
     {
         I_Error("M_StringReplace: Failed to allocate new string");
@@ -503,7 +501,7 @@ char *M_StringJoin(const char *s, ...)
     }
     va_end(args);
 
-    result = malloc(result_len);
+    result = Sys_Malloc(result_len);
 
     if (result == NULL)
     {
@@ -581,11 +579,11 @@ char *M_OEMToUTF8(const char *oem)
     wchar_t *tmp;
     char *result;
 
-    tmp = malloc(len * sizeof(wchar_t));
+    tmp = Sys_Malloc(len * sizeof(wchar_t));
     MultiByteToWideChar(CP_OEMCP, 0, oem, len, tmp, len);
-    result = malloc(len * 4);
+    result = Sys_Malloc(len * 4);
     WideCharToMultiByte(CP_UTF8, 0, tmp, len, result, len * 4, NULL, NULL);
-    free(tmp);
+    Sys_Free(tmp);
 
     return result;
 }
