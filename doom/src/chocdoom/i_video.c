@@ -120,55 +120,12 @@ typedef union {
 
 void I_FinishUpdate (void)
 {
-    uint64_t *d_y0;
-    uint64_t *d_y1;
-    uint64_t pix;
-    int s_y, i;
-    scanline_t *scanline;
-    scanline_u d_yt0, d_yt1;
-    screen_t screen;
-
-    screen_sync (0);
-    I_FlushCache();
-    screen_get_invis_screen(&screen);
-
-    d_y0 = (uint64_t *)screen.buf;
-    d_y1 = (uint64_t *)DST_NEXT_LINE(d_y0);
-
-    for (s_y = 0; s_y < D_SCREEN_PIX_CNT; s_y += SCREENWIDTH) {
-
-        scanline = (scanline_t *)&I_VideoBuffer[s_y];
-
-        for (i = 0; i < SCREENWIDTH; i += W_STEP) {
-
-            d_yt0.sl = *scanline++;
-            d_yt1    = d_yt0;
-
-            d_yt0.sl.a[3] = d_yt0.sl.a[1];
-            d_yt0.sl.a[2] = d_yt0.sl.a[1];
-            d_yt0.sl.a[1] = d_yt0.sl.a[0];
-
-            d_yt1.sl.a[0] = d_yt1.sl.a[2];
-            d_yt1.sl.a[1] = d_yt1.sl.a[2];
-            d_yt1.sl.a[2] = d_yt1.sl.a[3];
-
-#if (GFX_COLOR_MODE == GFX_COLOR_MODE_CLUT)
-            pix = (uint64_t)(((uint64_t)d_yt1.w << 32) | d_yt0.w);
-#elif (GFX_COLOR_MODE == GFX_COLOR_MODE_RGB565)
-            pix = d_yt0.w;
-            *d_y0++     = pix;
-            *d_y1++     = pix;
-
-            pix = d_yt1.w;
-#endif
-            *d_y0++     = pix;
-            *d_y1++     = pix;
-        }
-        d_y0 = d_y1;
-        d_y1 = (uint64_t *)DST_NEXT_LINE(d_y0);
-    }
+    screen_t scr;
+    scr.buf = &I_VideoBuffer[0];
+    scr.width = SCREENWIDTH;
+    scr.height = SCREENHEIGHT;
+    screen_update_2x2(&scr);
 }
-
 
 //
 // I_ReadScreen
@@ -302,7 +259,6 @@ void I_SetPalette (byte* palette, int idx)
                         GFX_OPAQUE);
         palette += 3;
     }
-sw_done:
 #if (GFX_COLOR_MODE == GFX_COLOR_MODE_CLUT)
     screen_sync(1);
     screen_set_clut(p_palette, clut_num_entries);
