@@ -85,13 +85,6 @@ static pal_t *rgb_palette;
 
 pal_t *p_palette;
 
-
-static inline void
-I_FlushCache (void)
-{
-    SCB_CleanDCache();
-}
-
 void I_StartFrame (void)
 {
 
@@ -124,7 +117,7 @@ void I_FinishUpdate (void)
     scr.buf = &I_VideoBuffer[0];
     scr.width = SCREENWIDTH;
     scr.height = SCREENHEIGHT;
-    screen_update_2x2(&scr);
+    screen_update(&scr);
 }
 
 //
@@ -260,7 +253,6 @@ void I_SetPalette (byte* palette, int idx)
         palette += 3;
     }
 #if (GFX_COLOR_MODE == GFX_COLOR_MODE_CLUT)
-    screen_sync(1);
     screen_set_clut(p_palette, clut_num_entries);
 #endif
     //I_CacheAclut();
