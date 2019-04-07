@@ -45,7 +45,7 @@ static inline void I_InitPaletteHR(void) {}
 static inline void I_SetPaletteHR(const byte *palette) {}
 static inline void I_FadeToPaletteHR(const byte *palette) {}
 static inline void I_BlackPaletteHR(void) {}
-static inline boolean I_CheckAbortHR(void) {}
+static inline boolean I_CheckAbortHR(void) {return false;}
 
 
 #endif

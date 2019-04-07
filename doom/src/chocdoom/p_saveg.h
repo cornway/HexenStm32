@@ -20,8 +20,6 @@
 #ifndef __P_SAVEG__
 #define __P_SAVEG__
 
-#include "ff.h"
-
 #define LOAD_SAVE_USE_RAM 1
 
 
@@ -65,7 +63,7 @@ void P_LoadEnd (void);
 
 
 
-extern FIL save_stream;
+extern int save_stream;
 extern boolean savegame_error;
 
 

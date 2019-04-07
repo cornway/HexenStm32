@@ -33,6 +33,7 @@
 #include "deh_main.h"
 
 #include "d_loop.h"
+#include "misc_utils.h"
 
 ticcmd_t *netcmds;
 

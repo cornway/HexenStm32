@@ -28,7 +28,7 @@
 #include "i_videohr.h"
 #include "s_sound.h"
 #include "st_start.h"
-
+#include "debug.h"
 
 // MACROS ------------------------------------------------------------------
 #define ST_MAX_NOTCHES		32

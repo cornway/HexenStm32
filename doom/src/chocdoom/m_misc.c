@@ -45,9 +45,7 @@
 #include "v_video.h"
 #include "w_wad.h"
 #include "z_zone.h"
-
-#include "ff.h"
-
+#include "dev_io.h"
 //
 // Create a directory
 //
@@ -60,7 +58,6 @@ void M_MakeDirectory(char *path)
 #if ORIGCODE
     mkdir(path, 0755);
 #else
-    FRESULT res;
     char* path_mod;
     int len;
 
@@ -78,7 +75,7 @@ void M_MakeDirectory(char *path)
 
     if (d_mkdir (path_mod) < 0)
     {
-        I_Error ("M_MakeDirectory: path = '%s', path_mod = '%s', res = %i", path, path_mod, res);
+        I_Error ("M_MakeDirectory: path = '%s', path_mod = '%s'", path, path_mod);
     }
 
     Sys_Free (path_mod);
@@ -108,14 +105,15 @@ boolean M_FileExists(char *filename)
         return errno == EISDIR;
     }
 #else
-	FILINFO fno;
+    int h;
 
-	if (f_stat (filename, &fno) != FR_OK)
-	{
-		return false;
-	}
-	
-	return true;
+    d_open(filename, &h, "r");
+
+    if (h < 0) {
+        return false;
+    }
+    d_close(h);
+    return true;
 #endif
 }
 
@@ -141,9 +139,9 @@ long M_FileLength(FILE *handle)
     return length;
 }
 #else
-long M_FileLength(FIL *handle)
+long M_FileLength(int handle)
 {
-    return f_size (handle);
+    return d_size(handle);
 }
 #endif
 
@@ -173,25 +171,20 @@ boolean M_WriteFile(char *name, void *source, int length)
 #else
 boolean M_WriteFile(char *name, void *source, int length)
 {
-	FIL file;
-	UINT c;
+	int file;
 
-	if (f_open (&file, name, FA_CREATE_ALWAYS | FA_WRITE) != FR_OK)
+    d_open(name, &file, "+w");
+	if (file < 0)
 	{
 		return false;
 	}
 
-	if (f_write (&file, source, length, &c) != FR_OK)
+	if (d_write (file, source, length) < 0)
 	{
 		return false;
 	}
 
-	f_close (&file);
-
-	if (c != length)
-	{
-		return false;
-	}
+	d_close (file);
 
 	return true;
 }
@@ -229,23 +222,22 @@ int M_ReadFile(char *name, byte **buffer)
 #else
 int M_ReadFile(char *name, byte **buffer)
 {
-	FIL file;
-	int length;
-	byte		*buf;
-	UINT read;
+    int file;
+    int length;
+    byte    *buf;
 
-	if (f_open (&file, name, FA_OPEN_EXISTING | FA_READ) != FR_OK)
-	{
-		I_Error ("Couldn't read file %s", name);
-	}
+    length = d_open(name, &file, "r");
+    if (file < 0)
+    {
+        I_Error ("Couldn't read file %s", name);
+    }
 
-	length = f_size (&file);
-	buf = Z_Malloc (length, PU_STATIC, NULL);
-	f_read (&file, buf, length, &read);
-	f_close (&file);
+    buf = Z_Malloc (length, PU_STATIC, NULL);
+    d_read (file, buf, length);
+    d_close (file);
 
-	*buffer = buf;
-	return length;
+    *buffer = buf;
+    return length;
 }
 #endif
 // Returns the path to a temporary file of the given name, stored
