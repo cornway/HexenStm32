@@ -39,6 +39,7 @@
 #include "z_zone.h"
 #include "audio_main.h"
 #include "dev_io.h"
+#include <bsp_sys.h>
 
 // when to clip out sounds
 // Does not fit the large outdoor areas.
@@ -514,7 +515,7 @@ void S_UpdateSounds(mobj_t *listener)
     int                sep;
     sfxinfo_t*        sfx;
     channel_t*        c;
-
+    profiler_enter();
     I_UpdateSound();
 
     for (cnum=0; cnum<snd_channels; cnum++)
@@ -571,6 +572,7 @@ void S_UpdateSounds(mobj_t *listener)
             }
         }
     }
+    profiler_exit();
 }
 
 void S_SetMusicVolume(int volume)
@@ -607,45 +609,21 @@ void S_StartMusic(int m_id)
 #define CD_NAME_MAX 20
 #define CD_TRACK_MAX 40
 
-extern const char *mus_dir_path;
 
-static int track_cnt = 0;
-static int track_cnt_enlist_done = 0;
 
-static char cdfiles[CD_TRACK_MAX][CD_NAME_MAX];
-
-int cd_file_hdlr (char *name, ftype_t type)
-{
-    if (type == FTYPE_FILE) {
-        if (!track_cnt_enlist_done) {
-            if (track_cnt < CD_TRACK_MAX) {
-                strncpy(cdfiles[track_cnt], name, sizeof(cdfiles[0]));
-                track_cnt++;
-            }
-            return 0;
-        }
-    }
-
-    return 0;
-}
 void S_PlayNum (int num)
 {
-    flist_t flist = {cd_file_hdlr};
-    char path[128];
 
-    if (!track_cnt_enlist_done) {
-        track_cnt = 0;
-        d_dirlist((char *)mus_dir_path, &flist);
-        track_cnt_enlist_done = 1;
-    }
-    num = num % track_cnt;
-    snprintf(path, sizeof(path), "%s/%s", mus_dir_path, cdfiles[num]);
-    cd_play_name(&cd, path);
 }
 
 void S_ChangeMusic(int musicnum, int looping)
 {
     S_StopMusic();
+    if (mus_playing_num == musicnum) {
+        if(S_MusicPlaying()) {
+            return;
+        }
+    }
     S_PlayNum(musicnum);
     mus_playing_num = musicnum;
     mus_playing = 1;

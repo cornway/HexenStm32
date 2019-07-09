@@ -43,19 +43,32 @@
 ;   <o> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
 
-Stack_Size		EQU     0x4000
+                IF      :DEF:TEST
+Stack_Size      EQU     0x4000
+                ELSE
+Stack_Size      EQU     0x7000
+                ENDIF
 
                 AREA    STACK, NOINIT, READWRITE, ALIGN=3
 Stack_Mem       SPACE   Stack_Size
 __initial_sp
 
 
+Shared_Size     EQU     0x1000
+
+                AREA    SHARED, NOINIT, READWRITE, ALIGN=3
+__shared_base
+Shared_Mem      SPACE   Shared_Size
+__shared_limit
+
 ; <h> Heap Configuration
 ;   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
-
-Heap_Size      EQU     0x0feb000
-
+                IF      :DEF:TEST
+Heap_Size       EQU     0x1000
+                ELSE
+Heap_Size       EQU     0x00fB0000
+                ENDIF
                 AREA    HEAP, NOINIT, READWRITE, ALIGN=3
 __heap_base
 Heap_Mem        SPACE   Heap_Size
@@ -605,6 +618,13 @@ MDIOS_IRQHandler
                 
                  IMPORT  __use_two_region_memory
                  EXPORT  __user_initial_stackheap
+
+                 EXPORT  Stack_Mem
+                 EXPORT  Stack_Size
+                 EXPORT  Heap_Mem
+                 EXPORT  Heap_Size
+                 EXPORT  Shared_Mem
+                 EXPORT  Shared_Size
                  
 __user_initial_stackheap
 

@@ -32,9 +32,8 @@
 #include "i_system.h"
 #include "m_argv.h"
 #include "m_misc.h"
-
 #include "z_zone.h"
-
+#include <misc_utils.h>
 //
 // DEFAULTS
 //
@@ -1560,10 +1559,9 @@ static default_collection_t extra_defaults =
 
 // Search a collection for a variable
 
-static default_t *SearchCollection(default_collection_t *collection, char *name)
+static const default_t *SearchCollection(default_collection_t *collection, char *name)
 {
     int i;
-
     for (i=0; i<collection->numdefaults; ++i) 
     {
         if (!H_strcmp(name, collection->defaults[i].name))
@@ -1571,7 +1569,6 @@ static default_t *SearchCollection(default_collection_t *collection, char *name)
             return &collection->defaults[i];
         }
     }
-
     return NULL;
 }
 
@@ -1798,7 +1795,7 @@ static void LoadDefaultCollection(default_collection_t *collection)
 
         // Find the setting in the list
 
-        def = SearchCollection(collection, defname);
+        def = (default_t *)SearchCollection(collection, defname);
 
         if (def == NULL || !def->bound)
         {
@@ -1881,7 +1878,6 @@ void M_SaveDefaultsAlternate(char *main, char *extra)
 void M_LoadDefaults (void)
 {
     int i;
- 
     // check for a custom default file
 
     //!
@@ -1935,12 +1931,11 @@ static default_t *GetDefaultForName(char *name)
     default_t *result;
 
     // Try the main list and the extras
-
-    result = SearchCollection(&doom_defaults, name);
+    result = (default_t *)SearchCollection(&doom_defaults, name);
 
     if (result == NULL)
     {
-        result = SearchCollection(&extra_defaults, name);
+        result = (default_t *)SearchCollection(&extra_defaults, name);
     }
 
     // Not found? Internal error.
@@ -2038,7 +2033,9 @@ float M_GetFloatVariable(char *name)
 
 static char *GetDefaultConfigDir(void)
 {
-#if !defined(_WIN32) || defined(_WIN32_WCE)
+#ifdef STM32_SDK
+    return FILES_DIR;
+#elif !defined(_WIN32) || defined(_WIN32_WCE)
 
     // Configuration settings are stored in ~/.chocolate-doom/,
     // except on Windows, where we behave like Vanilla Doom and
@@ -2130,9 +2127,8 @@ char *M_GetSaveGameDir(char *iwadname)
         M_MakeDirectory(savegamedir);
 
         free(topdir);
-#else
-        savegamedir = M_StringJoin(configdir, "savegame/", NULL);
-
+#elif defined(STM32_SDK)
+        savegamedir = M_StringJoin(configdir, "", NULL);
         M_MakeDirectory(savegamedir);
 
 #endif

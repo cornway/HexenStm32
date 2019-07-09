@@ -70,7 +70,7 @@ static boolean sound_initialized = false;
 
 static allocated_sound_t *channels_playing[NUM_CHANNELS];
 
-static int mixer_freq = AUDIO_SAMPLE_RATE;
+int mixer_freq;
 static boolean use_sfx_prefix;
 
 // Doubly-linked list of allocated sounds.
@@ -695,55 +695,6 @@ static boolean ExpandSoundData_SDL(sfxinfo_t *sfxinfo,
     return true;
 }
 
-extern int
-search_ext_sound (char *name, int lumpnum);
-
-extern int
-get_ext_snd_size (int num);
-
-extern int
-cache_ext_sound (int num, uint8_t *dest, int size);
-
-static void *I_CacheSoundExt(int lumpnum, int tag)
-{
-    byte *result;
-    lumpinfo_t *lump;
-    int sndnum = -1;
-
-    if ((unsigned)lumpnum >= numlumps)
-    {
-        I_Error ("W_CacheLumpNum: %i >= numlumps", lumpnum);
-    }
-
-    lump = &lumpinfo[lumpnum];
-
-    sndnum = search_ext_sound(lump->name, lumpnum);
-    if (sndnum < 0) {
-        return NULL;
-    }
-
-    lump->size = get_ext_snd_size(sndnum);
-
-    if (lump->cache != NULL)
-    {
-        // Already cached, so just switch the zone tag.
-
-        result = lump->cache;
-        Z_ChangeTag(lump->cache, tag);
-    }
-    else
-    {
-        // Not yet loaded, so load it now
-
-        lump->cache = Z_Malloc(lump->size, tag, &lump->cache);
-        cache_ext_sound(sndnum, lump->cache, lump->size);
-        result = lump->cache;
-    }
-
-    return result;
-}
-
-
 // Load and convert a sound effect
 // Returns true if successful
 
@@ -758,14 +709,8 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
     // need to load the sound
 
     lumpnum = sfxinfo->lumpnum;
-    data = I_CacheSoundExt(lumpnum, PU_STATIC);
-    if (data == NULL) {
-        data = W_CacheLumpNum(lumpnum, PU_STATIC);
-    } else {
-        expand_native_sound(sfxinfo, data, W_LumpLength(lumpnum));
-        W_ReleaseLumpNum(lumpnum);
-        return true;
-    }
+    data = W_CacheLumpNum(lumpnum, PU_STATIC);
+
     lumplen = W_LumpLength(lumpnum);
 
     // Check the header, and ensure this is a valid sound
@@ -922,11 +867,6 @@ static int I_SDL_GetSfxLumpNum(sfxinfo_t *sfx)
     int s;
 
     GetSfxLumpName(sfx, namebuf, sizeof(namebuf));
-
-    s = search_ext_sound(namebuf, -1);
-    if (s >= 0) {
-        return s;
-    }
 
     return W_GetNumForName(namebuf);
 }

@@ -39,12 +39,6 @@ void D_AdvanceDemo (void);
 void D_DoAdvanceDemo (void);
 void D_StartTitle (void);
 
-
-void DD_SetGameAct (gameaction_t action);
-void DD_ProcGameAct (void);
-void DD_LoadAltPkgGame(void);
-void DD_UpdateNoBlit (void);
-
 //
 // GLOBAL VARIABLES
 //

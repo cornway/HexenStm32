@@ -23,7 +23,8 @@
 #include "w_file.h"
 #include "z_zone.h"
 #include "i_system.h"
-#include "dev_io.h"
+#include <dev_io.h>
+
 typedef struct
 {
     wad_file_t wad;
@@ -56,9 +57,9 @@ static wad_file_t *W_StdC_OpenFile(char *path)
     return &result->wad;
 #else
     stdc_wad_file_t *result;
-    int file;
+    int file, length;
 
-    result->wad.length = d_open(path, &file, "r");
+    length = d_open(path, &file, "r");
     if (file < 0)
     {
     	return NULL;
@@ -69,6 +70,7 @@ static wad_file_t *W_StdC_OpenFile(char *path)
     result = Z_Malloc(sizeof(stdc_wad_file_t), PU_STATIC, 0);
 	result->wad.file_class = &stdc_wad_file;
 	result->wad.mapped = NULL;
+    result->wad.length = length;
 	result->fstream = file;
 
 	return &result->wad;
@@ -123,7 +125,7 @@ size_t W_StdC_Read(wad_file_t *wad, unsigned int offset,
 
     // Jump to the specified position in the file.
 
-	d_seek (stdc_wad->fstream, offset);
+	d_seek (stdc_wad->fstream, offset, DSEEK_SET);
 
     // Read into the buffer.
 
@@ -166,7 +168,7 @@ typedef void (*w_handle_t)(void *);
 static w_handle_t w_handle = NULL;
 static char *w_path = NULL;
 
-int W_StdC_ForeachHandle (char *name, ftype_t type)
+int W_StdC_ForeachHandle (char *name, d_bool is_dir)
 {
     char buf[128] = {0};
     char path_to_file[128] = {0};
@@ -175,7 +177,6 @@ int W_StdC_ForeachHandle (char *name, ftype_t type)
     strncpy(buf, name, sizeof(buf));
 
     ext = buf + strlen(buf) - sizeof(WAD_EXT) + 1;
-    strupr(ext);
     if (0 == strncmp(ext, WAD_EXT, sizeof(WAD_EXT))) {
         M_snprintf(path_to_file, sizeof(path_to_file),
             "%s/%s", w_path, name);
@@ -191,7 +192,7 @@ int W_StdC_ForeachHandle (char *name, ftype_t type)
 
 static void W_StdC_Foreach(char *path, w_handle_t handle)
 {
-    flist_t flist = {W_StdC_ForeachHandle, NULL};
+    fiter_t flist = {W_StdC_ForeachHandle, NULL};
     w_path = path;
     w_handle = handle;
     d_dirlist(path, &flist);

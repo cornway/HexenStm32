@@ -40,7 +40,7 @@
 // Data.
 #include "dstrings.h"
 #include "sounds.h"
-
+#include <bsp_sys.h>
 //
 // Locally used constants, shortcuts.
 //
@@ -380,15 +380,12 @@ void HU_Drawer(void)
 
 void HU_Erase(void)
 {
-
+    profiler_enter();
     HUlib_eraseSText(&w_message);
     HUlib_eraseIText(&w_chat);
     HUlib_eraseTextLine(&w_title);
-
+    profiler_exit();
 }
-
-extern uint32_t fps_prev;
-extern uint32_t msec_per_frame;
 
 void HU_Ticker(void)
 {
@@ -416,15 +413,7 @@ void HU_Ticker(void)
 	    message_counter = HU_MSGTIMEOUT;
 	    message_nottobefuckedwith = message_dontfuckwithme;
 	    message_dontfuckwithme = 0;
-	} else if (message_counter == 0) {
-	    char msg_buf[64];
-	    M_snprintf(msg_buf, sizeof(msg_buf), "FPS : %d(%d)",
-            fps_prev, msec_per_frame);
-        HUlib_addMessageToSText(&w_message, 0, msg_buf);
-	    plr->message = NULL;
-	    message_on = true;
-	    message_counter = HU_MSGTIMEOUT;
-    }
+	}
 	    message_dontfuckwithme = 0;
     } // else message_on = false;
 

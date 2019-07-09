@@ -20,13 +20,14 @@
 #ifndef __I_VIDEO__
 #define __I_VIDEO__
 
+#include <dev_conf.h>
 #include "doomtype.h"
 #include "gfx.h"
 
 // Screen width and height.
 
-#define SCREENWIDTH  320
-#define SCREENHEIGHT 200
+#define SCREENWIDTH  DEV_MAXXDIM
+#define SCREENHEIGHT DEV_MAXYDIM
 
 // Screen width used for "squash" scale functions
 
@@ -37,6 +38,10 @@
 #define SCREENHEIGHT_4_3 240
 
 #define MAX_MOUSE_BUTTONS 8
+
+typedef uint8_t pix_t;
+typedef uint32_t pal_t;
+#define COLOR_MODE_KEY
 
 typedef struct
 {
@@ -147,7 +152,7 @@ pix_t I_BlendPix (pix_t fg, pix_t bg, byte a);
 pix_t I_BlendPixMap (pix_t fg, pix_t bg);
 
 
-#if (GFX_COLOR_MODE != GFX_COLOR_MODE_CLUT)
+#if 0/*(GFX_COLOR_MODE != GFX_COLOR_MODE_CLUT)*/
 
 int I_GetClutIndex (pix_t pix);
 

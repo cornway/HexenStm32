@@ -35,13 +35,12 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "lcd_main.h"
-#include "i_video.h"
+#include <lcd_main.h>
+#include <audio_main.h>
+#include <heap.h>
 
-const char *mus_dir_path = "/doom/music";
-const char *snd_dir_path = "doom/sound/";
-
-extern int d_main(void);
+extern int mixer_freq;
+extern int D_DoomMain (void);
 extern int dev_main (void);
 
 int main(void)
@@ -49,18 +48,27 @@ int main(void)
     dev_main();
 }
 
+static void *__vid_alloc (uint32_t size)
+{
+    return heap_alloc_shared(size);
+}
+
 void VID_PreConfig (void)
 {
     screen_t screen;
     screen.buf = NULL;
-    screen.width = SCREENWIDTH;
-    screen.height = SCREENHEIGHT;
-    screen_win_cfg(&screen);
+    screen.width = DEV_MAXXDIM;
+    screen.height = DEV_MAXYDIM;
+    vid_config(__vid_alloc, NULL, &screen, GFX_COLOR_MODE_CLUT, 2);
 }
 
 int mainloop (int argc, const char *argv[])
 {
-    d_main();
+#if defined(BSP_DRIVER)
+    audio_conf("samplerate=22050, volume=64");
+    mixer_freq = 22050;
+#endif
+    D_DoomMain();
     return 0;
 }
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

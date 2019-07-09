@@ -22,6 +22,7 @@
 #include "m_misc.h"
 #include "i_swap.h"
 #include "p_local.h"
+#include <dev_io.h>
 
 // MACROS ------------------------------------------------------------------
 
@@ -2044,7 +2045,7 @@ void SV_LoadGame(int slot)
     SV_OpenRead(fileName);
 
     // Set the save pointer and skip the description field
-    d_seek(SavingFP, HXS_DESCRIPTION_LENGTH);
+    d_seek(SavingFP, HXS_DESCRIPTION_LENGTH, DSEEK_SET);
 
     // Check the version text
 

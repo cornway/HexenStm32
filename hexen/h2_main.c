@@ -43,6 +43,8 @@
 #include "p_local.h"
 #include "v_video.h"
 #include "w_main.h"
+#include <heap.h>
+#include <debug.h>
 
 #ifndef ORIG
 #define M_BindIntVariable(x...)
@@ -202,7 +204,7 @@ static void D_SetDefaultSavePath(void)
             // Windows and not using a config dir), behave like Vanilla Hexen
             // and use hexndata/:
 
-            SavePath = Sys_Malloc(10);
+            SavePath = (char *)heap_malloc(10);
             M_snprintf(SavePath, 10, "hexndata%c", DIR_SEPARATOR);
         }
 #if 0
@@ -725,7 +727,7 @@ static void HandleArgs(void)
             M_StringConcat(file, ".lmp", sizeof(file));
         }
 
-        Sys_Free(uc_filename);
+        heap_free(uc_filename);
 
         if (W_AddFile(file) != NULL)
         {
@@ -1181,7 +1183,7 @@ void H_memcpy (void *dest, void *src, int count)
             ((byte *)dest)[i] = ((byte *)src)[i];
 }
 
-int H_strcmp (char *s1, char *s2)
+int H_strcmp (const char *s1, const char *s2)
 {
     while (1)
     {

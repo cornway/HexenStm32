@@ -39,10 +39,7 @@
 #include "g_game.h"
 #include "D_player.h"
 #include "input_main.h"
-
-#if (GFX_COLOR_MODE == GFX_COLOR_MODE_RGBA8888)
-#error "ARGB rendering broken!"
-#endif
+#include <bsp_sys.h>
 
 #ifndef MAX
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
@@ -51,6 +48,15 @@
 #ifndef MIN
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #endif
+
+#define IVID_IRAM 1
+
+// The screen buffer; this is modified to draw things to the screen
+
+#if IVID_IRAM
+pix_t I_VideoBuffer_static[SCREENHEIGHT * SCREENWIDTH * sizeof(pix_t)];
+#endif
+pix_t *I_VideoBuffer = NULL;
 
 // If true, game is running as a screensaver
 
@@ -91,25 +97,7 @@ void I_StartFrame (void)
 }
 void I_UpdateNoBlit (void)
 {
-    DD_UpdateNoBlit();
 }
-
-
-typedef struct {
-    pix_t a[4];
-} scanline_t;
-
-typedef union {
-#if (GFX_COLOR_MODE == GFX_COLOR_MODE_CLUT)
-    uint32_t w;
-#elif (GFX_COLOR_MODE == GFX_COLOR_MODE_RGB565)
-    uint64_t w;
-#endif
-    scanline_t sl;
-} scanline_u;
-
-#define DST_NEXT_LINE(x) (((uint32_t)(x) + SCREENWIDTH * 2 * sizeof(pix_t)))
-#define W_STEP (sizeof(scanline_t) / sizeof(pix_t))
 
 void I_FinishUpdate (void)
 {
@@ -117,15 +105,16 @@ void I_FinishUpdate (void)
     scr.buf = &I_VideoBuffer[0];
     scr.width = SCREENWIDTH;
     scr.height = SCREENHEIGHT;
-    screen_update(&scr);
+    vid_upate(&scr);
 }
+
 
 //
 // I_ReadScreen
 //
 void I_ReadScreen (pix_t* scr)
 {
-    memcpy (scr, I_VideoBuffer, D_SCREEN_BYTE_CNT);
+    d_memcpy (scr, I_VideoBuffer, SCREENHEIGHT * SCREENWIDTH * sizeof(pix_t));
 }
 
 //
@@ -139,7 +128,8 @@ static pal_t *prev_clut = NULL;
 static byte *aclut = NULL;
 static byte *aclut_map = NULL;
 
-#if (GFX_COLOR_MODE == GFX_COLOR_MODE_RGB565)
+/*FIXME : !!!*/
+#if 0/*(GFX_COLOR_MODE == GFX_COLOR_MODE_RGB565)*/
 
 static const uint16_t aclut_entry_cnt = 0xffff;
 
@@ -236,26 +226,33 @@ void I_SetPalette (byte* palette, int idx)
 {
     unsigned int i;
     rgb_t* color;
+    pal_t *pal;
 
-    if (!p_palette)
-        p_palette = Z_Malloc(clut_num_bytes, PU_STATIC, 0);
+    if (idx > arrlen(palettes)) {
+        fatal_error("");
+    }
+    if (palettes[idx]) {
+        p_palette = palettes[idx];
+        goto sw_done;
+    }
+    pal = Z_Malloc(clut_num_bytes, PU_STATIC, 0);
+    palettes[idx] = pal;
+    p_palette = pal;
 
-    palettes[idx] = p_palette;
-    rgb_palette = p_palette;
-
+    if (idx == 0) {
+        rgb_palette = pal;
+    }
     for (i = 0; i < clut_num_entries; i++)
     {
         color = (rgb_t*)palette;
-        p_palette[i] = GFX_RGB(gammatable[usegamma][color->r],
-                        gammatable[usegamma][color->g],
-                        gammatable[usegamma][color->b],
-                        GFX_OPAQUE);
+        pal[i] = GFX_RGBA8888(gammatable[usegamma][color->r],
+                                gammatable[usegamma][color->g],
+                                gammatable[usegamma][color->b],
+                                0xff);
         palette += 3;
     }
-#if (GFX_COLOR_MODE == GFX_COLOR_MODE_CLUT)
-    screen_set_clut(p_palette, clut_num_entries);
-#endif
-    //I_CacheAclut();
+sw_done:
+    vid_set_clut(p_palette, clut_num_entries);
     return;
 }
 
@@ -274,14 +271,14 @@ static void I_RefreshPalette (int pal_idx)
     }
 
     for (i = 0; i < clut_num_entries; i++) {
-        r = GFX_ARGB_R(pal[i]);
-        g = GFX_ARGB_G(pal[i]);
-        b = GFX_ARGB_B(pal[i]);
+        r = GFX_ARGB8888_R(pal[i]);
+        g = GFX_ARGB8888_G(pal[i]);
+        b = GFX_ARGB8888_B(pal[i]);
 
-        pal[i] = GFX_RGB(GFX_OPAQUE,
-                        gammatable[usegamma][r],
-                        gammatable[usegamma][g],
-                        gammatable[usegamma][b]);
+        pal[i] = GFX_RGBA8888(gammatable[usegamma][r],
+                                gammatable[usegamma][g],
+                                gammatable[usegamma][b],
+                                0xff);
     }
 }
 
@@ -296,7 +293,8 @@ void I_RefreshClutsButPlaypal (void)
     }
 }
 
-#if (GFX_COLOR_MODE != GFX_COLOR_MODE_CLUT)
+/*FIXME : !!!*/
+#if 0/*(GFX_COLOR_MODE != GFX_COLOR_MODE_CLUT)*/
 
 static int _I_GetClutIndex (pal_t *pal, pix_t pix)
 {
@@ -342,9 +340,9 @@ int I_GetPaletteIndex (int r, int g, int b)
 
     for (i = 0; i < clut_num_entries; ++i)
     {
-        color.r = GFX_ARGB_R(rgb_palette[i]);
-        color.g = GFX_ARGB_G(rgb_palette[i]);
-        color.b = GFX_ARGB_B(rgb_palette[i]);
+        color.r = GFX_ARGB8888_R(rgb_palette[i]);
+        color.g = GFX_ARGB8888_G(rgb_palette[i]);
+        color.b = GFX_ARGB8888_B(rgb_palette[i]);
         diff = (r - color.r) * (r - color.r)
              + (g - color.g) * (g - color.g)
              + (b - color.b) * (b - color.b);
@@ -412,46 +410,46 @@ const kbdmap_t gamepad_to_kbd_map[JOY_STD_MAX] =
     [JOY_LEFTARROW]     = {KEY_LEFTARROW ,0},
     [JOY_RIGHTARROW]    = {KEY_RIGHTARROW, 0},
     [JOY_K1]            = {KEY_USE, PAD_FREQ_LOW},
-    [JOY_K4]            = {KEY_END,  0},
+    [JOY_K4]            = {KEY_RSHIFT,  0},
     [JOY_K3]            = {KEY_FIRE, 0},
     [JOY_K2]            = {KEY_TAB,    PAD_FREQ_LOW},
     [JOY_K5]            = {KEY_STRAFE_L,    0},
     [JOY_K6]            = {KEY_STRAFE_R,    0},
-    [JOY_K7]            = {KEY_DEL,  0},
-    [JOY_K8]            = {KEY_PGDN, 0},
+    [JOY_K7]            = {'<',  0},
+    [JOY_K8]            = {'>', 0},
     [JOY_K9]            = {KEY_ENTER, 0},
     [JOY_K10]           = {KEY_ESCAPE, PAD_FREQ_LOW},
 };
 
-void input_post_key (i_event_t e)
+extern int *joy_extrafreeze;
+
+static i_event_t *__post_key (i_event_t *events, i_event_t *e)
 {
     event_t event =
         {
-            e.state == keyup ? ev_keyup : ev_keydown,
-            e.sym, -1, -1, -1
+            e->state == keyup ? ev_keyup : ev_keydown,
+            e->sym, -1, -1, -1
         };
     D_PostEvent(&event);
+    return events;
 }
 
 void I_GetEvent (void)
 {
-    input_proc_keys();
+    input_proc_keys(NULL);
 }
 
 void I_InitGraphics (void)
 {
-    screen_t screen;
+#if !IVID_IRAM
+    I_VideoBuffer = (pix_t*)Z_Malloc (SCREENWIDTH * SCREENHEIGHT * sizeof(pix_t), PU_STATIC, NULL);
+#else
+    I_VideoBuffer = I_VideoBuffer_static;
+#endif
 	screenvisible = true;
     p_palette = rgb_palette;
-    screen.buf = NULL;
-    screen.width = SCREENWIDTH;
-    screen.height = SCREENHEIGHT;
-    screen_win_cfg(&screen);
 
-    input_soft_init(gamepad_to_kbd_map);
-    input_bind_extra(K_EX_LOOKUP, KEY_HOME);
-    input_bind_extra(K_EX_LOOKUP, KEY_DEL);
-    input_bind_extra(K_EX_LOOKUP, KEY_INS);
+    input_soft_init(__post_key, (void *)gamepad_to_kbd_map);
 }
 
 void I_ShutdownGraphics (void)

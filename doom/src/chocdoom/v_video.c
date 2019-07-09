@@ -35,21 +35,12 @@
 #include "v_video.h"
 #include "w_wad.h"
 #include "z_zone.h"
+#include <bsp_sys.h>
 
 #include "config.h"
 #ifdef HAVE_LIBPNG
 #include <png.h>
 #endif
-
-#define IVID_IRAM 1
-
-// The screen buffer; this is modified to draw things to the screen
-
-#if IVID_IRAM
-pix_t I_VideoBuffer_static[D_SCREEN_PIX_CNT];
-#endif
-pix_t *I_VideoBuffer = NULL;
-
 
 // TODO: There are separate RANGECHECK defines for different games, but this
 // is common code. Fix this.
@@ -287,7 +278,9 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
 
 void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {
+    profiler_enter();
     V_DrawPatch(x, y, patch); 
+    profiler_exit();
 } 
 
 //
@@ -612,25 +605,17 @@ void V_DrawBox(int x, int y, int w, int h, int c)
  
 void V_DrawRawScreen(byte *raw)
 {
-    v_copy_line(I_VideoBuffer, raw, SCREENWIDTH * SCREENHEIGHT);
+    v_copy_line(dest_screen, raw, SCREENWIDTH * SCREENHEIGHT);
 }
 
 //
 // V_Init
 // 
-void **scrptr;
 void V_Init (void) 
 { 
     // no-op!
     // There used to be separate screens that could be drawn to; these are
     // now handled in the upper layers.
-#if !IVID_IRAM
-    I_VideoBuffer = (pix_t*)Z_Malloc (D_SCREEN_BYTE_CNT, PU_STATIC, NULL);
-#else
-    I_VideoBuffer = I_VideoBuffer_static;
-#endif
-    scrptr = (void **)&dest_screen;
-    V_RestoreBuffer();
 }
 
 // Set the buffer that the code draws to.
