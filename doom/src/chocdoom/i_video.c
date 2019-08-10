@@ -105,7 +105,7 @@ void I_FinishUpdate (void)
     scr.buf = &I_VideoBuffer[0];
     scr.width = SCREENWIDTH;
     scr.height = SCREENHEIGHT;
-    vid_upate(&scr);
+    vid_update(&scr);
 }
 
 
@@ -450,6 +450,7 @@ void I_InitGraphics (void)
     p_palette = rgb_palette;
 
     input_soft_init(__post_key, (void *)gamepad_to_kbd_map);
+    V_RestoreBuffer();
 }
 
 void I_ShutdownGraphics (void)

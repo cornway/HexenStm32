@@ -1198,21 +1198,6 @@ void D_DoomMain (void)
     
     DEH_printf("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init ();
-    {
-        extern int mixer_freq;
-
-        const char *vol = "64";
-        p = M_CheckParm("-vol");
-        if (p > 0)
-        {
-            vol = myargv[p + 1];
-        }
-        snprintf(file, sizeof(file), "samplerate=22050, volume=%s", vol);
-        if (audio_conf(file) < 0) {
-            assert(0);
-        }
-        mixer_freq = 22050;
-    }
 #ifdef FEATURE_MULTIPLAYER
     //!
     // @category net

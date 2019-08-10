@@ -574,7 +574,7 @@ R_VideoErase
 
     if (background_buffer != NULL)
     {
-        memcpy(I_VideoBuffer + ofs, background_buffer + ofs, count * sizeof(pix_t)); 
+        d_memcpy(I_VideoBuffer + ofs, background_buffer + ofs, count * sizeof(pix_t)); 
     }
 } 
 

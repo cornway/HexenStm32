@@ -67,7 +67,7 @@ __shared_limit
                 IF      :DEF:TEST
 Heap_Size       EQU     0x1000
                 ELSE
-Heap_Size       EQU     0x00fB0000
+Heap_Size       EQU     0x00f70000
                 ENDIF
                 AREA    HEAP, NOINIT, READWRITE, ALIGN=3
 __heap_base

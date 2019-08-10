@@ -28,7 +28,7 @@
 #include "i_videohr.h"
 #include "s_sound.h"
 #include "st_start.h"
-#include "debug.h"
+#include <debug.h>
 
 // MACROS ------------------------------------------------------------------
 #define ST_MAX_NOTCHES		32
@@ -214,8 +214,6 @@ void ST_Progress(void)
             notchPosition++;
         }
     }
-
-    dprintf(".");
 }
 
 
@@ -268,7 +266,7 @@ void ST_Message(const char *message, ...)
     va_list argptr;
 
     va_start(argptr, message);
-    vprintf(message, argptr);
+    dvprintf(message, argptr);
     va_end(argptr);
 }
 
@@ -283,7 +281,7 @@ void ST_RealMessage(const char *message, ...)
     va_list argptr;
 
     va_start(argptr, message);
-    vprintf(message, argptr);
+    dvprintf(message, argptr);
     va_end(argptr);
 }
 

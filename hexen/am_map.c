@@ -726,9 +726,9 @@ void AM_clearFB(int color)
     j = mapystart * finit_width;
     for (i = 0; i < SCREENHEIGHT - SBARHEIGHT; i++)
     {
-        memcpy(I_VideoBuffer + i * finit_width, maplump + j + mapxstart,
+        d_memcpy(I_VideoBuffer + i * finit_width, maplump + j + mapxstart,
                finit_width - mapxstart);
-        memcpy(I_VideoBuffer + i * finit_width + finit_width - mapxstart,
+        d_memcpy(I_VideoBuffer + i * finit_width + finit_width - mapxstart,
                maplump + j, mapxstart);
         j += finit_width;
         if (j >= finit_height * finit_width)

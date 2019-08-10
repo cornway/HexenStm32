@@ -53,6 +53,7 @@
 #include "z_zone.h"
 #include <bsp_sys.h>
 #include <bsp_cmd.h>
+#include <heap.h>
 
 #ifdef __MACOSX__
 #include <CoreFoundation/CFUserNotification.h>

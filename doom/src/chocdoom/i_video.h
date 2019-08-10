@@ -26,8 +26,8 @@
 
 // Screen width and height.
 
-#define SCREENWIDTH  DEV_MAXXDIM
-#define SCREENHEIGHT DEV_MAXYDIM
+#define SCREENWIDTH  320
+#define SCREENHEIGHT 200
 
 // Screen width used for "squash" scale functions
 

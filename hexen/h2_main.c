@@ -45,6 +45,9 @@
 #include "w_main.h"
 #include <heap.h>
 #include <debug.h>
+#include <dev_io.h>
+#include <bsp_sys.h>
+#include <audio_main.h>
 
 #ifndef ORIG
 #define M_BindIntVariable(x...)
@@ -284,7 +287,7 @@ static void D_HexenQuitMessage(void)
 
 static void D_AddFile(char *filename)
 {
-    dprintf("  adding %s\n", filename);
+    dprintf("adding [%s]\n", filename);
 
     W_AddFile(filename);
 }
@@ -373,7 +376,22 @@ void D_DoomMain(void)
     I_PrintBanner(PACKAGE_STRING);
 
     // Initialize subsystems
+    {
+        char buf[128];
+        extern int mixer_freq;
 
+        const char *vol = "64";
+        p = M_CheckParm("-vol");
+        if (p > 0)
+        {
+            vol = myargv[p + 1];
+        }
+        snprintf(buf, sizeof(buf), "samplerate=22050, volume=%s", vol);
+        if (audio_conf(buf) < 0) {
+            assert(0);
+        }
+        mixer_freq = 22050;
+    }
     ST_Message("V_Init: allocate screens.\n");
     V_Init();
 
@@ -820,9 +838,11 @@ void H2_GameLoop(void)
         M_snprintf(filename, sizeof(filename), "debug%i.txt", consoleplayer);
         d_open(filename, &debugfile, "w");
     }
+    ST_Message("SB_Init: I_SetWindowTitle.\n");
     I_SetWindowTitle((char *)gamedescription);
     I_GraphicsCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
+    ST_Message("SB_Init: I_InitGraphics.\n");
     I_InitGraphics();
     I_SetPalette ((byte *)W_CacheLumpName ("PLAYPAL",PU_CACHE), 0);
     while (1)
@@ -839,7 +859,7 @@ void H2_GameLoop(void)
 
         DrawAndBlit();
 
-        audio_update();
+        bsp_tickle();
     }
 }
 

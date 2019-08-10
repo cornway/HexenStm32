@@ -32,6 +32,7 @@
 #include "r_local.h"
 #include "s_sound.h"
 #include "v_video.h"
+#include <dev_io.h>
 
 // MACROS ------------------------------------------------------------------
 
