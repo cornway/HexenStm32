@@ -82,7 +82,8 @@ void	G_PlayerReborn (int player);
 void	G_DoReborn (int playernum); 
  
 void	G_DoLoadLevel (void); 
-void	G_DoNewGame (void); 
+void	G_DoNewGame (void);
+void	G_StartNewGameUser (skill_t skill, int map);
 void	G_DoPlayDemo (void); 
 void	G_DoCompleted (void); 
 void	G_DoVictory (void); 

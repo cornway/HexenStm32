@@ -38,6 +38,7 @@
 
 #define LEFT_DIR 0
 #define RIGHT_DIR 1
+#define FORWARD_DIR 2
 #define ITEM_HEIGHT 20
 #define SELECTOR_XOFFSET (-28)
 #define SELECTOR_YOFFSET (-1)
@@ -59,6 +60,7 @@ typedef enum
 {
     MENU_MAIN,
     MENU_CLASS,
+    MENU_MAP,
     MENU_SKILL,
     MENU_OPTIONS,
     MENU_OPTIONS2,
@@ -99,6 +101,7 @@ static void SetMenu(MenuType_t menu);
 static void SCQuitGame(int option);
 static void SCClass(int option);
 static void SCSkill(int option);
+static void SCMap (int option);
 static void SCMouseSensi(int option);
 static void SCSfxVolume(int option);
 static void SCMusicVolume(int option);
@@ -113,6 +116,7 @@ static void SCInfo(int option);
 static void DrawMainMenu(void);
 static void DrawClassMenu(void);
 static void DrawSkillMenu(void);
+static void DrawMapSelectMenu(void);
 static void DrawOptionsMenu(void);
 static void DrawOptions2Menu(void);
 static void DrawFileSlots(Menu_t * menu);
@@ -250,6 +254,16 @@ static Menu_t SkillMenu = {
     DrawSkillMenu,
     5, SkillItems,
     2,
+    MENU_MAP
+};
+
+static MenuItem_t MapSelectItems[] = {ITT_LRFUNC, "MAP SELECT", SCMap, 0, MENU_SKILL};
+
+static Menu_t MapSelectMenu = {
+    120, 44,
+    DrawMapSelectMenu,
+    1, MapSelectItems,
+    0,
     MENU_CLASS
 };
 
@@ -289,6 +303,7 @@ static Menu_t Options2Menu = {
 static Menu_t *Menus[] = {
     &MainMenu,
     &ClassMenu,
+    &MapSelectMenu,
     &SkillMenu,
     &OptionsMenu,
     &Options2Menu,
@@ -629,6 +644,15 @@ static void DrawSkillMenu(void)
     MN_DrTextB("CHOOSE SKILL LEVEL:", 74, 16);
 }
 
+static void DrawMapSelectMenu(void)
+{
+extern int TempMap;
+    char buf[128];
+
+    snprintf(buf, sizeof(buf), "%d", TempMap);
+    MN_DrTextB(buf, 122, 64);
+}
+
 //---------------------------------------------------------------------------
 //
 // PROC DrawFilesMenu
@@ -684,7 +708,7 @@ static boolean ReadDescriptionForSlot(int slot, char *description)
 
     M_snprintf(name, sizeof(name), "%shex%d.hxs", SavePath, slot);
 
-    fp = d_open(name, &fp, "rb");
+    d_open(name, &fp, "rb");
 
     if (fp < 0)
     {
@@ -1014,7 +1038,7 @@ static void SCClass(int option)
             SkillItems[4].text = "ARCHIMAGE";
             break;
     }
-    SetMenu(MENU_SKILL);
+    SetMenu(MENU_MAP);
 }
 
 //---------------------------------------------------------------------------
@@ -1608,7 +1632,7 @@ boolean MN_Responder(event_t * event)
                 CurrentMenu->oldItPos = CurrentItPos;
                 if (item->type == ITT_LRFUNC)
                 {
-                    item->func(RIGHT_DIR);
+                    item->func(FORWARD_DIR);
                 }
                 else if (item->type == ITT_EFUNC)
                 {
@@ -1788,6 +1812,21 @@ void MN_DrawInfo(void)
                                    PU_CACHE), SCREENWIDTH * SCREENHEIGHT);
 //      V_DrawPatch(0, 0, W_CacheLumpNum(W_GetNumForName("TITLE")+InfoType,
 //              PU_CACHE));
+}
+
+
+static void SCMap (int option)
+{
+extern int TempMap;
+    if (option == RIGHT_DIR) {
+        TempMap++;
+        //if (TempMap > 16) TempMap = 16;
+    } else if (option == LEFT_DIR) {
+        TempMap--;
+        if (TempMap < 1) TempMap = 1;
+    } else if (option == FORWARD_DIR) {
+        SetMenu(MENU_SKILL);
+    }
 }
 
 

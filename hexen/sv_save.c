@@ -1937,7 +1937,7 @@ void SV_SaveGame(int slot, const char *description)
     SV_Write(description, HXS_DESCRIPTION_LENGTH);
 
     // Write version info
-    memset(versionText, 0, HXS_VERSION_TEXT_LENGTH);
+    d_memset(versionText, 0, HXS_VERSION_TEXT_LENGTH);
     M_StringCopy(versionText, HXS_VERSION_TEXT, HXS_VERSION_TEXT_LENGTH);
     SV_Write(versionText, HXS_VERSION_TEXT_LENGTH);
 
@@ -3263,7 +3263,7 @@ static void CopyFile(char *source_name, char *dest_name)
     int read_handle, write_handle;
     int buf_count, read_count, write_count;
 
-    file_remaining = d_open(source_name, &read_handle, "rb");
+    file_remaining = d_open(source_name, &read_handle, "r");
     if (read_handle < 0)
     {
         I_Error ("Couldn't read file %s", source_name);
@@ -3282,7 +3282,7 @@ static void CopyFile(char *source_name, char *dest_name)
         Z_Free(buffer);
     }
 
-    d_open(dest_name, &write_handle, "+wb");
+    d_open(dest_name, &write_handle, "+w");
     if (write_handle < 0)
     {
         I_Error ("Couldn't read file %s", dest_name);
@@ -3359,7 +3359,7 @@ static void SV_OpenRead(char *fileName)
 
 static void SV_OpenWrite(char *fileName)
 {
-    SavingFP = d_open(fileName, &SavingFP, "+wb");
+    d_open(fileName, &SavingFP, "+w");
 }
 
 //==========================================================================

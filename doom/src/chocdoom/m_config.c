@@ -2034,7 +2034,7 @@ float M_GetFloatVariable(char *name)
 static char *GetDefaultConfigDir(void)
 {
 #ifdef STM32_SDK
-    return FILES_DIR;
+    return strdup(FILES_DIR"/");
 #elif !defined(_WIN32) || defined(_WIN32_WCE)
 
     // Configuration settings are stored in ~/.chocolate-doom/,

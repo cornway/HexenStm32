@@ -176,6 +176,7 @@ int inventoryTics;
 // haleyjd: removed externdriver crap
 
 static skill_t TempSkill;
+int TempMap = 1;
 static int TempEpisode;
 static int TempMap;
 
@@ -1451,17 +1452,22 @@ void G_StartNewInit(void)
 //
 //==========================================================================
 
-void G_StartNewGame(skill_t skill)
+void G_StartNewGameUser (skill_t skill, int map)
 {
     int realMap;
 
     G_StartNewInit();
-    realMap = P_TranslateMap(1);
+    realMap = P_TranslateMap(map);
     if (realMap == -1)
     {
         realMap = 1;
     }
     G_InitNew(TempSkill, 1, realMap);
+}
+
+void G_StartNewGame(skill_t skill)
+{
+    G_StartNewGameUser(skill, 1);
 }
 
 //==========================================================================
@@ -1725,7 +1731,7 @@ void G_DeferredNewGame(skill_t skill)
 
 void G_DoNewGame(void)
 {
-    G_StartNewGame(TempSkill);
+    G_StartNewGameUser (TempSkill, TempMap);
     gameaction = ga_nothing;
 }
 

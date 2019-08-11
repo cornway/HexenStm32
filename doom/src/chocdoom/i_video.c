@@ -410,7 +410,7 @@ const kbdmap_t gamepad_to_kbd_map[JOY_STD_MAX] =
     [JOY_LEFTARROW]     = {KEY_LEFTARROW ,0},
     [JOY_RIGHTARROW]    = {KEY_RIGHTARROW, 0},
     [JOY_K1]            = {KEY_USE, PAD_FREQ_LOW},
-    [JOY_K4]            = {KEY_RSHIFT,  0},
+    [JOY_K4]            = {' ',  0},
     [JOY_K3]            = {KEY_FIRE, 0},
     [JOY_K2]            = {KEY_TAB,    PAD_FREQ_LOW},
     [JOY_K5]            = {KEY_STRAFE_L,    0},
@@ -422,6 +422,8 @@ const kbdmap_t gamepad_to_kbd_map[JOY_STD_MAX] =
 };
 
 extern int *joy_extrafreeze;
+extern boolean MenuActive;
+static uint32_t keyevent_tsf = 0;
 
 static i_event_t *__post_key (i_event_t *events, i_event_t *e)
 {
@@ -430,6 +432,11 @@ static i_event_t *__post_key (i_event_t *events, i_event_t *e)
             e->state == keyup ? ev_keyup : ev_keydown,
             e->sym, -1, -1, -1
         };
+    if (e->state == keydown) {
+        if (0 == d_rlimit_wrap(&keyevent_tsf, 300) && MenuActive) {
+            return NULL;
+        }
+    }
     D_PostEvent(&event);
     return events;
 }

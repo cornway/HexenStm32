@@ -97,5 +97,5 @@
 #undef ORIGCODE
 
 /* Define to the directory where all game files are located */
-#define FILES_DIR "./hexen"
-#define WADS_DIR "./hexen/wads"
+#define FILES_DIR "hexen"
+#define WADS_DIR "hexen/wads"
