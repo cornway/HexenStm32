@@ -42,11 +42,11 @@
 
 extern int mixer_freq;
 extern int D_DoomMain (void);
-extern int dev_main (void);
+extern int app_main (void);
 
 int main(void)
 {
-    dev_main();
+    app_main();
 }
 
 static void *__vid_alloc (uint32_t size)
