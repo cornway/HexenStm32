@@ -704,7 +704,7 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
     unsigned int lumplen;
     int samplerate;
     unsigned int length;
-    byte *data;
+    volatile byte PACKED *data;
 
     // need to load the sound
 
